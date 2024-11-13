@@ -62,6 +62,7 @@ body {
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+    --radius: 0.5rem;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -76,6 +77,11 @@ body {
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+}
+
+.grid-cols-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 }
 
 @layer base {

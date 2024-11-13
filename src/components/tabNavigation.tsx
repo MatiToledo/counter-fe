@@ -1,15 +1,23 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUser } from "@/hooks/context/user";
 import { Home, MessageCircle, Settings } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function TabNavigation() {
+  const user = useUser().user;
   const router = useRouter();
   const pathname = usePathname();
 
+  const HOME_DICTIONARY: Record<string, string> = {
+    partner: "/dashboard",
+    guardDoor: "/guardDoor",
+    guardBar: "/guardBar",
+  };
+
   const tabs = [
-    { icon: Home, path: "/guard" },
+    { icon: Home, path: `${HOME_DICTIONARY[user?.role as string]}` },
     { icon: MessageCircle, path: "/chat" },
     { icon: Settings, path: "/settings" },
   ];

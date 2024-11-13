@@ -2,8 +2,9 @@
 
 import { Separator } from "@/components/ui/separator";
 import MenuSettings from "./menu";
+import { User } from "@/lib/types/models";
 
-export default function SettingsComponent() {
+export default function SettingsComponent({ user }: { user: User }) {
   return (
     <div className="container max-w-2xl ">
       <div className="space-y-1 mb-4">
@@ -15,7 +16,7 @@ export default function SettingsComponent() {
         </p>
       </div>
       <Separator></Separator>
-      <MenuSettings />
+      <MenuSettings user={user} />
       <Separator></Separator>
     </div>
   );

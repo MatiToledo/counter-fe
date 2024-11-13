@@ -1,37 +1,77 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import { Bolt, ShieldCheck, User } from "lucide-react";
-import ProfileTab from "./profile";
-import SecurityTab from "./security";
+"use client";
+import { User } from "@/lib/types/models";
+import { Bolt, ShieldCheck, Store } from "lucide-react";
+import { useEffect, useState } from "react";
+import ProfileForm from "../forms/settings/profile";
+import SecurityForm from "../forms/settings/security";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import BranchTab from "./branch";
 import PreferencesTab from "./preferences";
 
-export default function MenuSettings() {
-  const tabs = [
-    { icon: User, id: "profile", text: "Perfil" },
-    { icon: ShieldCheck, id: "security", text: "Seguridad" },
-    { icon: Bolt, id: "preferences", text: "Preferencias" },
-  ];
+export default function MenuSettings({ user }: { user: User }) {
+  const [tabs, setTabs] = useState([
+    {
+      icon: Bolt,
+      id: "profile",
+      text: "Perfil",
+      element: <ProfileForm user={user} />,
+    },
+    {
+      icon: ShieldCheck,
+      id: "security",
+      text: "Seguridad",
+      element: <SecurityForm />,
+    },
+    {
+      icon: Bolt,
+      id: "preferences",
+      text: "Preferencias",
+      element: <PreferencesTab />,
+    },
+  ]);
+
+  useEffect(() => {
+    if (user.role === "partner") {
+      const multipleBranch = user.Branches.length > 1;
+
+      setTabs((prev) => {
+        if (!tabs.some((tab) => tab.id === "branch")) {
+          return [
+            ...prev.slice(0, 1),
+            {
+              icon: Store,
+              id: "branch",
+              text: multipleBranch ? "Sucursales" : "Sucursal",
+              element: <BranchTab branches={user.Branches} />,
+            },
+            ...prev.slice(1),
+          ];
+        }
+
+        return prev;
+      });
+    }
+  }, []);
+
+  console.log("tabs.length: ", tabs.length);
   return (
     <Tabs defaultValue={"profile"} className="w-full my-2 bg-background">
-      <TabsList className="grid w-full grid-cols-3 h-[50px] rounded-none">
+      <TabsList className={`grid w-full grid-cols-auto min-h-[70px]`}>
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.text}
             value={tab.id}
             className="flex flex-col items-center py-2 data-[state=active]:text-primary">
-            <tab.icon className="h-5 w-5 text-black dark:text-white" />
-            <p className="text-muted-foreground text-sm	mt-1">{tab.text}</p>
+            <tab.icon className="h-5 w-5 text-primary" />
+            <p className="text-muted-foreground text-sm mt-1">{tab.text}</p>
           </TabsTrigger>
         ))}
       </TabsList>
-      <TabsContent value="profile" className="w-full mt-6">
-        <ProfileTab></ProfileTab>
-      </TabsContent>
-      <TabsContent value="security" className="w-full mt-6">
-        <SecurityTab />
-      </TabsContent>
-      <TabsContent value="preferences" className="w-full mt-6">
-        <PreferencesTab />
-      </TabsContent>
+      {tabs.map((tab) => (
+        <TabsContent key={tab.text} value={tab.id} className="w-full mt-6">
+          {tab.element}
+        </TabsContent>
+      ))}
     </Tabs>
   );
 }

@@ -1,18 +1,23 @@
-import { Sun, Moon, LogOut } from "lucide-react";
+import { Sun, Moon, LogOut, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { useCookies } from "react-cookie";
+import { useRouter } from "next/navigation";
 
 export default function PreferencesTab() {
   const { theme, setTheme } = useTheme();
-  console.log("theme: ", theme);
+  const { push } = useRouter();
+  const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
   const handleLogout = () => {
-    console.log("Cerrando sesión...");
+    removeCookie("token");
+    removeCookie("role");
+    push("/logIn");
   };
   return (
     <div className="space-y-4">
@@ -39,7 +44,7 @@ export default function PreferencesTab() {
 
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
-          <Label className="text-black dark:text-white">Cuenta</Label>
+          <Label className="text-black dark:text-white">Sesión</Label>
           <p className="text-sm text-muted-foreground">
             Cerrar sesión de tu cuenta
           </p>
@@ -50,6 +55,21 @@ export default function PreferencesTab() {
           onClick={handleLogout}
           aria-label="Cerrar sesión">
           <LogOut className="h-5 w-5 text-black dark:text-white" />
+        </Button>
+      </div>
+      <Separator />
+
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <Label className="text-black dark:text-white">Cuenta</Label>
+          <p className="text-sm text-muted-foreground">Eliminar tu cuenta</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleLogout}
+          aria-label="Cerrar sesión">
+          <Trash2 className="h-5 w-5 text-black dark:text-white" />
         </Button>
       </div>
     </div>

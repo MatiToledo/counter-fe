@@ -2,16 +2,18 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import LogInForm from "./forms/logIn";
+import Link from "next/link";
 
 export function LoginComponent() {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
         <CardDescription>
           Ingrese su correo a continuación para iniciar sesión en su cuenta
         </CardDescription>
@@ -19,6 +21,13 @@ export function LoginComponent() {
       <CardContent>
         <LogInForm />
       </CardContent>
+      <CardFooter className="flex justify-center">
+        <Link
+          href={"/access"}
+          className="text-muted-foreground text-sm underline">
+          Ingresar como socio
+        </Link>
+      </CardFooter>
     </Card>
   );
 }
