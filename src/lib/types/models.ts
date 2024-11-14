@@ -26,4 +26,14 @@ export interface User extends Model {
 export interface Branch extends Model {
   name: string;
   maxCapacity: number;
+  Users: User[];
+}
+
+export interface Message extends Model {
+  text: string;
+  timestamp: string;
+  sender: string;
+  isYou: boolean;
+  UserId: UUID;
+  BranchId: UUID;
 }

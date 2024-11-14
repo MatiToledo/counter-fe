@@ -16,6 +16,12 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  if (isAuth && req.nextUrl.pathname === "/") {
+    const path = role === "partner" ? "/dashboard" : `/${role}`;
+    const redirectUrl = new URL(path, req.nextUrl.origin);
+    return NextResponse.redirect(redirectUrl);
+  }
+
   if (!isAuth) {
     const redirectUrl = new URL("/logIn", req.nextUrl.origin);
     return NextResponse.redirect(redirectUrl);
