@@ -37,7 +37,7 @@ export default function LogInForm() {
   const { push } = useRouter();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const [cookies, setCookie] = useCookies(["token", "role"]);
+  const [cookies, setCookie] = useCookies(["token", "subRole"]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -51,12 +51,11 @@ export default function LogInForm() {
     try {
       setLoading(true);
       const fetch = await fetchLogIn({ ...data, role: UserRoleEnum.USER });
-      console.log("fetch: ", fetch);
       setCookie("token", fetch.token);
-      setCookie("role", fetch.role);
-      push(`/${fetch.role}`);
+      setCookie("subRole", fetch.subRole);
+      console.log("fetch: ", fetch);
+      push(`/${fetch.subRole}`);
     } catch (error: any) {
-      console.log("error: ", error);
       toast({
         variant: "destructive",
         title: error.message,

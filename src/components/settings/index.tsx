@@ -1,8 +1,8 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import MenuSettings from "./menu";
 import { User } from "@/lib/types/models";
+import MenuSettings from "./menu";
 
 export default function SettingsComponent({ user }: { user: User }) {
   return (

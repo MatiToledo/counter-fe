@@ -53,7 +53,6 @@ export default function MenuSettings({ user }: { user: User }) {
     }
   }, []);
 
-  console.log("tabs.length: ", tabs.length);
   return (
     <Tabs defaultValue={"profile"} className="w-full my-2 bg-background">
       <TabsList className={`grid w-full grid-cols-auto min-h-[70px]`}>

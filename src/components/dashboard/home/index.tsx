@@ -1,7 +1,25 @@
-import { useUser } from "@/hooks/context/user";
+"use client";
+import DashboardHeader from "@/components/header/dashboard";
+import { Branch, User } from "@/lib/types/models";
+import { useState } from "react";
+import UsersDashboard from "../metrics/users";
 
-export default function DashboardHomeComponent() {
-  const user = useUser();
-  console.log("user: ", user);
-  return <div className="h-screen w-full p-4">Dashboard</div>;
+export default function DashboardHomeComponent({ user }: { user: User }) {
+  const [BranchId, setBranchId] = useState(user.Branches[0].id);
+
+  const branch = user.Branches.find((b) => b.id === BranchId);
+
+  return (
+    <div className="h-screen w-full">
+      <DashboardHeader
+        branches={user.Branches}
+        BranchId={BranchId}
+        setBranchId={setBranchId}></DashboardHeader>
+      <div className="p-4">
+        <UsersDashboard
+          branch={branch as Branch}
+          UserId={user.id}></UsersDashboard>
+      </div>
+    </div>
+  );
 }

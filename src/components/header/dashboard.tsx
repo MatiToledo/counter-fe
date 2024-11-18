@@ -1,7 +1,6 @@
-import { UserRoleEnum } from "@/lib/types/enums";
+"use client";
 import { Branch } from "@/lib/types/models";
 import { UUID } from "crypto";
-import { Users } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import {
   Select,
@@ -12,23 +11,21 @@ import {
   SelectValue,
 } from "../ui/select";
 
-export default function ChatHeader({
-  role,
-  members,
+export default function DashboardHeader({
   branches,
   BranchId,
   setBranchId,
 }: {
-  role: UserRoleEnum;
-  members: number;
   branches: Branch[];
   BranchId: UUID;
   setBranchId: Dispatch<SetStateAction<UUID>>;
 }) {
-  const canChangeBranch = role === UserRoleEnum.PARTNER && branches.length > 1;
+  const canChangeBranch = branches.length > 1;
+
   function handleBranchChange(value: string) {
     setBranchId(value as UUID);
   }
+
   return (
     <header className="flex items-center justify-between p-4 border-b">
       <div className="flex items-center gap-2">
@@ -48,12 +45,8 @@ export default function ChatHeader({
             </SelectContent>
           </Select>
         ) : (
-          <h1 className="text-lg font-bold text-primary">Güemes</h1>
+          <h1 className="text-lg font-bold text-primary">{branches[0].name}</h1>
         )}
-        <span className="text-sm text-muted-foreground flex items-center gap-1">
-          <Users className="h-4 w-4" />
-          {members} miembros
-        </span>
       </div>
     </header>
   );

@@ -34,7 +34,7 @@ const FormSchema = z.object({
 export default function LogInForm() {
   const { push } = useRouter();
   const { mutateUser } = useUser();
-  const [cookies, setCookie] = useCookies(["token", "role"]);
+  const [cookies, setCookie] = useCookies(["token", "subRole"]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -50,11 +50,10 @@ export default function LogInForm() {
       setLoading(true);
       const fetch = await fetchLogIn({ ...data, role: UserRoleEnum.PARTNER });
       setCookie("token", fetch.token);
-      setCookie("role", fetch.role);
+      setCookie("subRole", fetch.subRole);
       mutateUser();
       push("/dashboard");
     } catch (error: any) {
-      console.log("error: ", error);
       toast({
         variant: "destructive",
         title: error.message,

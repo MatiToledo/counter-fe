@@ -21,13 +21,15 @@ export function Display({
         {total}
       </div>
 
-      <div className="w-full max-w-xs mb-4">
-        <Progress value={occupancyPercentage} className="h-2" />
-        <div className="flex justify-between text-xs mt-1">
-          <span>{total}</span>
-          <span>{maxCapacity}</span>
+      {maxCapacity && (
+        <div className="w-full max-w-xs mb-4">
+          <Progress value={occupancyPercentage} className="h-2" />
+          <div className="flex justify-between text-xs mt-1">
+            <span>{total}</span>
+            <span>{maxCapacity}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="w-full max-w-xs flex justify-between mb-8 mt-2 text-center text-gray-400">
         <div>

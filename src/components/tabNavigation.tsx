@@ -12,12 +12,13 @@ export default function TabNavigation() {
 
   const HOME_DICTIONARY: Record<string, string> = {
     partner: "/dashboard",
+    admin: "/dashboard",
     guardDoor: "/guardDoor",
     guardBar: "/guardBar",
   };
 
   const tabs = [
-    { icon: Home, path: `${HOME_DICTIONARY[user?.role as string]}` },
+    { icon: Home, path: `${HOME_DICTIONARY[user?.subRole as string]}` },
     { icon: MessageCircle, path: "/chat" },
     { icon: Settings, path: "/settings" },
   ];

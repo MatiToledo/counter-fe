@@ -65,7 +65,7 @@ function LoadingButton({
   disabled: boolean;
 }) {
   return (
-    <Button disabled={disabled} type="submit">
+    <Button disabled={disabled} type="submit" className="w-full">
       {loading && <Loader2 className="animate-spin" />}
       {children}
     </Button>

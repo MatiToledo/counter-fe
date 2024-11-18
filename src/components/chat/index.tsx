@@ -1,31 +1,28 @@
 "use client";
 
-import useChat from "@/hooks/useChat";
 import { User } from "@/lib/types/models";
+import { UUID } from "crypto";
+import { useState } from "react";
 import ChatHeader from "./header";
 import MessagesChat from "./messages";
+import useSocket from "@/hooks/useSocket";
 import SendMessage from "./send";
 
 export default function ChatComponent({ user }: { user: User }) {
-  const {
-    messages,
-    sendMessage,
-    loadMoreMessages,
-    loadingMore,
-    haveNewMessage,
-    setHaveNewMessage,
-  } = useChat(user.id, user.Branches[0].id);
-  const members = user.Branches[0].Users.length;
+  const [branchId, setBranchId] = useState<UUID>(user.Branches[0].id);
+  const { sendMessage } = useSocket(branchId, user.id);
   return (
     <div className="flex flex-col bg-background ">
-      <ChatHeader members={members} branches={user.Branches} role={user.role} />
-      <MessagesChat
-        messages={messages}
-        loadMoreMessages={loadMoreMessages}
-        loadingMore={loadingMore}
-        haveNewMessage={haveNewMessage}
-        setHaveNewMessage={setHaveNewMessage}
+      <ChatHeader
+        members={
+          user.Branches.find((b) => b.id === branchId)?.Users.length || 1
+        }
+        branches={user.Branches}
+        role={user.role}
+        BranchId={branchId}
+        setBranchId={setBranchId}
       />
+      <MessagesChat BranchId={branchId} UserId={user.id} />
       <SendMessage sendMessage={sendMessage}></SendMessage>
     </div>
   );

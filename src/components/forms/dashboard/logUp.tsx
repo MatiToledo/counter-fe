@@ -1,8 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { fetchLogIn, fetchLogUp } from "@/api/endpoints/auth";
 import { LoadingButton } from "@/components/ui/button";
 import {
@@ -18,9 +16,12 @@ import PasswordInput from "@/components/ui/password";
 import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
 import { UserRoleEnum, UserSubRoleEnum } from "@/lib/types/enums";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const FormSchema = z
   .object({

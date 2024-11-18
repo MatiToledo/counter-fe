@@ -2,22 +2,24 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const ROUTE_ACCESS: Record<string, string[]> = {
-  "/dashboard": ["partner"],
+  "/dashboard": ["partner", "admin"],
   "/guardDoor": ["guardDoor"],
   "/guardBar": ["guardBar"],
 };
 
 export function middleware(req: NextRequest) {
   const isAuth = req.cookies.get("token")?.value;
-  const role = req.cookies.get("role")?.value;
-
+  console.log("isAuth: ", isAuth);
+  const subRole = req.cookies.get("subRole")?.value;
+  const isAdmin = subRole === "partner" || subRole === "admin";
+  console.log("isAdmin: ", isAdmin);
   if (!isAuth && req.nextUrl.pathname === "/") {
     const redirectUrl = new URL("/logIn", req.nextUrl.origin);
     return NextResponse.redirect(redirectUrl);
   }
 
   if (isAuth && req.nextUrl.pathname === "/") {
-    const path = role === "partner" ? "/dashboard" : `/${role}`;
+    const path = isAdmin ? "/dashboard" : `/${subRole}`;
     const redirectUrl = new URL(path, req.nextUrl.origin);
     return NextResponse.redirect(redirectUrl);
   }
@@ -29,7 +31,7 @@ export function middleware(req: NextRequest) {
 
   const allowedRoles = ROUTE_ACCESS[req.nextUrl.pathname];
 
-  if (allowedRoles && !allowedRoles.includes(role as string)) {
+  if (allowedRoles && !allowedRoles.includes(subRole as string)) {
     const redirectUrl = new URL("/logIn", req.nextUrl.origin);
     return NextResponse.redirect(redirectUrl);
   }

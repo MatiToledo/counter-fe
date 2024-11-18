@@ -1,116 +1,114 @@
 import { useToast } from "@/hooks/use-toast";
-import { Message } from "@/lib/types/models";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { ToastAction } from "../ui/toast";
+import useChat from "@/hooks/useChat";
+import { UUID } from "crypto";
 import { Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import MessageComponent from "./message";
+import { ToastAction } from "../ui/toast";
 
-export default function MessagesChat({
-  messages,
-  loadMoreMessages,
-  loadingMore,
-  haveNewMessage,
-  setHaveNewMessage,
-}: {
-  messages: Message[];
-  loadMoreMessages: (container: HTMLDivElement | null) => Promise<void>;
-  loadingMore: boolean;
-  haveNewMessage: boolean;
-  setHaveNewMessage: Dispatch<SetStateAction<boolean>>;
-}) {
-  console.log("loadingMore: ", loadingMore);
-  const { toast } = useToast();
-  const containerRef = useRef<HTMLDivElement>(null);
+type MessagesChatProps = {
+  BranchId: UUID;
+  UserId: UUID;
+};
 
-  const handleScroll = async () => {
-    if (containerRef.current && containerRef.current.scrollTop === 0) {
-      await loadMoreMessages(containerRef.current); // Pasar la referencia del contenedor
-    }
-  };
+export default function MessagesChat({ BranchId, UserId }: MessagesChatProps) {
+  const container = useRef() as React.MutableRefObject<HTMLDivElement>;
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const { toast, dismiss } = useToast();
+  const [previousScrollHeight, setPreviousScrollHeight] = useState(0);
+  const {
+    messages,
+    isLoadingMore,
+    loadMore,
+    setPage,
+    haveNextPage,
+    haveNewMessage,
+    setHaveNewMessage,
+  } = useChat(BranchId, UserId);
 
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToBottom();
-    }, 100);
-  }, []);
+  const lastMessage = messages[messages.length - 1];
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const element = containerRef.current;
-    const isBottom =
-      element.scrollHeight - element.scrollTop === element.clientHeight;
-    if (haveNewMessage && !isBottom) {
-      toast({
-        description: "Nuevo mensaje",
-        action: (
-          <ToastAction altText="Ver" onClick={scrollToBottom}>
-            Ver
-          </ToastAction>
-        ),
-      });
-    }
-  }, [haveNewMessage]);
+    setPage(1);
+    setPreviousScrollHeight(0);
+    scrollToBottom();
+  }, [BranchId]);
 
   const scrollToBottom = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+    if (container.current) {
+      container.current.scrollTop = container.current.scrollHeight;
     }
-    setHaveNewMessage(false);
   };
 
+  function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = container.current;
+
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+    if (isAtTop && haveNextPage) {
+      loadMore();
+    }
+
+    if (isAtBottom) {
+      setHaveNewMessage(false);
+      dismiss();
+    }
+  }
+
+  useEffect(() => {
+    if (container.current) {
+      const scrollHeightDifference =
+        container.current.scrollHeight - previousScrollHeight;
+      container.current.scrollTop += scrollHeightDifference;
+      setPreviousScrollHeight(container.current.scrollHeight);
+
+      // Comprobar si el último mensaje es visible
+      if (haveNewMessage && lastMessageRef.current) {
+        const lastMessageRect = lastMessageRef.current.getBoundingClientRect();
+        const containerRect = container.current.getBoundingClientRect();
+
+        // Verificar si el último mensaje está fuera de la vista
+        if (
+          lastMessageRect.bottom > containerRect.bottom ||
+          lastMessageRect.top < containerRect.top
+        ) {
+          toast({
+            title: "Nuevo mensaje",
+            description: "Tienes un nuevo mensaje.",
+            action: (
+              <ToastAction altText="Ver" onClick={() => scrollToBottom()}>
+                Ver
+              </ToastAction>
+            ),
+          });
+        }
+      } else {
+        scrollToBottom();
+      }
+    }
+  }, [messages, haveNewMessage]);
+
   return (
-    <div>
-      <div
-        ref={containerRef}
-        className="flex-1 p-4 space-y-4 max-h-[calc(100vh-180px)] min-h-[calc(100vh-180px)] overflow-y-auto">
-        {loadingMore && (
-          <Loader2 className="animate-spin w-full m-auto"></Loader2>
-        )}
-        {messages
-          .filter(
-            (message, index, self) =>
-              index === self.findIndex((m) => m.id === message.id)
-          )
-          .map((message) => (
-            <div
-              key={message.id}
-              className={`flex flex-col ${
-                message.isYou ? "items-end" : "items-start"
-              }`}>
-              <div className="flex items-end gap-2 mb-1">
-                <span className="text-sm font-semibold text-muted-foreground">
-                  {message.sender}
-                </span>
-                <span className="text-xs text-muted-foreground mb-[1px]">
-                  {message.timestamp}
-                </span>
-              </div>
-              <div
-                className={`rounded-lg px-3 py-2 text-sm max-w-[70%] ${
-                  message.isYou
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-black dark:text-white"
-                }`}>
-                {message.text}
-              </div>
-            </div>
-          ))}
-      </div>
+    <div
+      ref={container}
+      onScroll={handleScroll}
+      className="flex-1 p-4 space-y-4 max-h-[calc(100vh-188px)] min-h-[calc(100vh-188px)] overflow-y-auto">
+      {isLoadingMore && (
+        <Loader2 className="animate-spin w-full m-auto"></Loader2>
+      )}
+      {messages
+        .filter(
+          (message, index, self) =>
+            index === self.findIndex((m) => m.id === message.id)
+        )
+        .map((message) => (
+          <div
+            ref={message.id === lastMessage.id ? lastMessageRef : null}
+            key={message.id}>
+            <MessageComponent message={message} />
+          </div>
+        ))}
     </div>
   );
 }

@@ -37,3 +37,11 @@ export interface Message extends Model {
   UserId: UUID;
   BranchId: UUID;
 }
+export interface Concurrence extends Model {
+  BranchId: UUID;
+  date: string;
+  type: "entry" | "exit";
+  hourIntervalStart: number;
+  entries: number;
+  exits: number;
+}

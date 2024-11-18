@@ -47,7 +47,6 @@ export default function ProfileForm({ user }: { user: User }) {
         delete data.email;
       }
       await fetchUpdateUser(user.id, data);
-      console.log("DESPUES DEL FETCH");
       await mutateUser();
       form.reset({
         email: data.email,

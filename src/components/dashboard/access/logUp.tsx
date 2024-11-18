@@ -6,8 +6,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useState } from "react";
 
 export default function LogUpTab() {
+  const [step, setStep] = useState<number>(1);
+  const [data, setData] = useState({});
+
   return (
     <Card>
       <CardHeader>
