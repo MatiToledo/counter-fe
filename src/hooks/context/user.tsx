@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { fetchGetMe } from "@/api/endpoints/user";
-import { getLSToken } from "@/lib/localStorage";
+import { getLSToken, removeLSSubRole, removeLSToken } from "@/lib/localStorage";
 import { User } from "@/lib/types/models";
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 interface UserContextProps {
@@ -18,23 +19,25 @@ const UserContext = createContext<UserContextProps>({
 });
 
 export const UserProvider = ({ children }: any) => {
-  const isAuth = !!getLSToken();
+  const { push } = useRouter();
 
-  const { data, error, mutate } = useSWR<User>(
-    isAuth ? "/api/user/me" : null,
-    fetchGetMe,
-    {
-      revalidateOnMount: true,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-    }
-  );
+  const { data, mutate, isLoading } = useSWR<User>("/api/user/me", fetchGetMe, {
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    onError: () => {
+      removeLSToken();
+      removeLSSubRole();
+      push("/logIn");
+    },
+  });
 
-  const isLoading = !data && !error;
   const user = data as User;
   async function mutateUser() {
-    console.log("MUTATE");
+    console.log("POR MUTATE");
+
     await mutate(undefined, { revalidate: true });
+    console.log("MUTATE");
   }
 
   return (

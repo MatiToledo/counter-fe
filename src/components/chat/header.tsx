@@ -2,7 +2,6 @@ import { UserRoleEnum } from "@/lib/types/enums";
 import { Branch } from "@/lib/types/models";
 import { UUID } from "crypto";
 import { Users } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
 import {
   Select,
   SelectContent,
@@ -23,7 +22,7 @@ export default function ChatHeader({
   members: number;
   branches: Branch[];
   BranchId: UUID;
-  setBranchId: Dispatch<SetStateAction<UUID>>;
+  setBranchId: (selectedBranch: UUID) => void;
 }) {
   const canChangeBranch = role === UserRoleEnum.PARTNER && branches.length > 1;
   function handleBranchChange(value: string) {

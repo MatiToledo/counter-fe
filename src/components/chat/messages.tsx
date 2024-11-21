@@ -25,6 +25,7 @@ export default function MessagesChat({ BranchId, UserId }: MessagesChatProps) {
     haveNewMessage,
     setHaveNewMessage,
   } = useChat(BranchId, UserId);
+  console.log("isLoadingMore: ", isLoadingMore);
 
   const lastMessage = messages[messages.length - 1];
 
@@ -40,14 +41,14 @@ export default function MessagesChat({ BranchId, UserId }: MessagesChatProps) {
     }
   };
 
-  function handleScroll() {
+  async function handleScroll() {
     const { scrollTop, scrollHeight, clientHeight } = container.current;
 
     const isAtTop = scrollTop === 0;
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
     if (isAtTop && haveNextPage) {
-      loadMore();
+      await loadMore();
     }
 
     if (isAtBottom) {
@@ -60,8 +61,11 @@ export default function MessagesChat({ BranchId, UserId }: MessagesChatProps) {
     if (container.current) {
       const scrollHeightDifference =
         container.current.scrollHeight - previousScrollHeight;
-      container.current.scrollTop += scrollHeightDifference;
-      setPreviousScrollHeight(container.current.scrollHeight);
+
+      // Verificar si estamos al fondo
+      const isAtBottom =
+        container.current.scrollTop + container.current.clientHeight >=
+        container.current.scrollHeight - 1;
 
       // Comprobar si el último mensaje es visible
       if (haveNewMessage && lastMessageRef.current) {
@@ -83,8 +87,17 @@ export default function MessagesChat({ BranchId, UserId }: MessagesChatProps) {
             ),
           });
         }
-      } else {
+      }
+
+      // Actualizar altura previa
+      setPreviousScrollHeight(container.current.scrollHeight);
+
+      // Si estamos al fondo, desplazamos hacia abajo
+      if (isAtBottom) {
         scrollToBottom();
+      } else {
+        // Si no estamos al fondo, ajustamos el scroll manteniendo la posición relativa
+        container.current.scrollTop += scrollHeightDifference;
       }
     }
   }, [messages, haveNewMessage]);

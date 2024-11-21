@@ -39,9 +39,10 @@ export default function useChat(BranchId: UUID, UserId: UUID) {
     setMessages((prevMessages) => [...prevMessages, message]);
   });
 
-  function loadMore() {
+  async function loadMore() {
     setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1);
+    await mutate();
     setIsLoadingMore(false);
   }
 

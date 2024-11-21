@@ -1,29 +1,40 @@
 "use client";
 
+import { useNewMessageStore, useSelectedBranchStore } from "@/lib/state";
 import { User } from "@/lib/types/models";
 import { UUID } from "crypto";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatHeader from "./header";
 import MessagesChat from "./messages";
-import useSocket from "@/hooks/useSocket";
 import SendMessage from "./send";
 
 export default function ChatComponent({ user }: { user: User }) {
-  const [branchId, setBranchId] = useState<UUID>(user.Branches[0].id);
-  const { sendMessage } = useSocket(branchId, user.id);
+  const setNewMessage = useNewMessageStore((state) => state.setHaveNewMessage);
+  const selectedBranch = useSelectedBranchStore(
+    (state) => state.selectedBranch
+  );
+  const setSelectedBranch = useSelectedBranchStore(
+    (state) => state.setSelectedBranch
+  );
+
+  useEffect(() => {
+    setSelectedBranch(user.Branches[0].id);
+    setNewMessage(false);
+  }, []);
+
   return (
     <div className="flex flex-col bg-background ">
       <ChatHeader
         members={
-          user.Branches.find((b) => b.id === branchId)?.Users.length || 1
+          user.Branches.find((b) => b.id === selectedBranch)?.Users.length || 1
         }
         branches={user.Branches}
         role={user.role}
-        BranchId={branchId}
-        setBranchId={setBranchId}
+        BranchId={selectedBranch}
+        setBranchId={setSelectedBranch}
       />
-      <MessagesChat BranchId={branchId} UserId={user.id} />
-      <SendMessage sendMessage={sendMessage}></SendMessage>
+      <MessagesChat BranchId={selectedBranch} UserId={user.id} />
+      <SendMessage BranchId={selectedBranch} UserId={user.id}></SendMessage>
     </div>
   );
 }
