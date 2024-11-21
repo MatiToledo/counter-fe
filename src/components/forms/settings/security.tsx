@@ -39,7 +39,6 @@ export default function SecurityForm() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       setLoading(true);
-
       await fetchUpdatePassword(data);
       form.reset();
       toast({

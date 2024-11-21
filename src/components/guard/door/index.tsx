@@ -3,11 +3,11 @@ import { GuardAlert } from "./alert";
 import CounterComponent from "./counter";
 import { User } from "@/lib/types/models";
 
-export default function GuardComponent({ user }: { user: User }) {
+export default function GuardDoorComponent({ user }: { user: User }) {
   const branch = user.Branches[0];
   return (
     <Fragment>
-      <CounterComponent BranchId={branch.id} maxCapacity={branch.maxCapacity} />
+      <CounterComponent branch={branch} />
       <GuardAlert></GuardAlert>
     </Fragment>
   );

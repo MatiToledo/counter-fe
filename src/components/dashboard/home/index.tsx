@@ -1,8 +1,8 @@
 "use client";
-import DashboardHeader from "@/components/header/dashboard";
 import { Branch, User } from "@/lib/types/models";
 import { useState } from "react";
 import UsersDashboard from "../metrics/users";
+import DashboardHeader from "../header";
 
 export default function DashboardHomeComponent({ user }: { user: User }) {
   const [BranchId, setBranchId] = useState(user.Branches[0].id);

@@ -3,25 +3,30 @@ function getItem(key: string) {
     return localStorage.getItem(key);
   }
 }
+function setItem(key: string, value: string) {
+  if (typeof window !== "undefined") {
+    return localStorage.setItem(key, value);
+  }
+}
 
 export function getLSToken() {
   return getItem("token");
 }
 export function saveLSToken(token: string) {
-  localStorage.setItem("token", token);
+  setItem("token", token);
 }
 
 export function removeLSToken() {
   localStorage.removeItem("token");
 }
 
-export function getLSRole() {
-  return getItem("role");
+export function getLSSubRole() {
+  return getItem("subRole");
 }
-export function saveLSRole(role: string) {
-  localStorage.setItem("role", role);
+export function saveLSSubRole(subRole: string) {
+  setItem("subRole", subRole);
 }
 
-export function removeLSRole() {
-  localStorage.removeItem("role");
+export function removeLSSubRole() {
+  localStorage.removeItem("subRole");
 }

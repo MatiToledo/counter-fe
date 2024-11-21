@@ -24,7 +24,7 @@ export function AlertDialogComponent({
         <DialogHeader>
           <DialogTitle>Enviar Alerta</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-2">
+        <div className="grid gap-4">
           <Button
             onClick={() => onSendAlert("authorities")}
             className="flex items-center justify-start gap-2">

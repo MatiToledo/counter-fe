@@ -4,6 +4,7 @@ import { UserProvider } from "@/hooks/context/user";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "../styles/globals.css";
+import TabNavigation from "@/components/tabNavigation";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",

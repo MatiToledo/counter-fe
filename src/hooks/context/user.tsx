@@ -1,37 +1,47 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { fetchGetMe } from "@/api/endpoints/user";
+import { getLSToken } from "@/lib/localStorage";
 import { User } from "@/lib/types/models";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 interface UserContextProps {
   user: User;
-  loading: boolean;
+  isLoading: boolean;
   mutateUser: any;
 }
 
 const UserContext = createContext<UserContextProps>({
   user: {} as User,
-  loading: true,
+  isLoading: true,
   mutateUser: async () => {},
 });
 
 export const UserProvider = ({ children }: any) => {
-  const { data, error, mutate } = useSWR<User>("/api/user/me", fetchGetMe, {
-    revalidateOnMount: true,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: true,
-  });
+  const isAuth = !!getLSToken();
 
-  const loading = !data && !error;
+  const { data, error, mutate } = useSWR<User>(
+    isAuth ? "/api/user/me" : null,
+    fetchGetMe,
+    {
+      revalidateOnMount: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+    }
+  );
+
+  const isLoading = !data && !error;
   const user = data as User;
-  const mutateUser = () => mutate(undefined, { revalidate: true });
+  async function mutateUser() {
+    console.log("MUTATE");
+    await mutate(undefined, { revalidate: true });
+  }
 
   return (
     <UserContext.Provider
       value={{
         user,
-        loading,
+        isLoading,
         mutateUser,
       }}>
       {children}

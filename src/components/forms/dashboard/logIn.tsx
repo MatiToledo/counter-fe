@@ -21,7 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useCookies } from "react-cookie";
+import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
 const FormSchema = z.object({
   email: z.string().email({
     message: "El correo electrónico no es válido",
@@ -34,7 +34,6 @@ const FormSchema = z.object({
 export default function LogInForm() {
   const { push } = useRouter();
   const { mutateUser } = useUser();
-  const [cookies, setCookie] = useCookies(["token", "subRole"]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -49,9 +48,9 @@ export default function LogInForm() {
     try {
       setLoading(true);
       const fetch = await fetchLogIn({ ...data, role: UserRoleEnum.PARTNER });
-      setCookie("token", fetch.token);
-      setCookie("subRole", fetch.subRole);
-      mutateUser();
+      saveLSToken(fetch.token);
+      saveLSSubRole(fetch.subRole);
+      await mutateUser();
       push("/dashboard");
     } catch (error: any) {
       toast({
@@ -94,7 +93,9 @@ export default function LogInForm() {
             </FormItem>
           )}
         />
-        <LoadingButton loading={loading}>Ingresar</LoadingButton>
+        <LoadingButton loading={loading} disabled={!form.formState.isDirty}>
+          Ingresar
+        </LoadingButton>
       </form>
     </Form>
   );

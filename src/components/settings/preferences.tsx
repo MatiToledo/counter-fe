@@ -4,19 +4,18 @@ import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
-import { useCookies } from "react-cookie";
 import { useRouter } from "next/navigation";
+import { removeLSSubRole, removeLSToken } from "@/lib/localStorage";
 
 export default function PreferencesTab() {
   const { theme, setTheme } = useTheme();
   const { push } = useRouter();
-  const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
   const handleLogout = () => {
-    removeCookie("token");
-    removeCookie("role");
+    removeLSToken();
+    removeLSSubRole();
     push("/logIn");
   };
   return (

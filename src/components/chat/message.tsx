@@ -6,9 +6,9 @@ export default function MessageComponent({ message }: { message: Message }) {
     <div
       key={id}
       className={`flex flex-col ${isYou ? "items-end" : "items-start"}`}>
-      <div className="flex items-end gap-2 mb-1">
+      <div className="flex items-end gap-1 mb-1">
         <span className="text-sm font-semibold text-muted-foreground">
-          {sender}
+          {isYou ? "Tú" : sender} -
         </span>
         <span className="text-xs text-muted-foreground mb-[1px]">
           {calculateTimestamp(createdAt)}

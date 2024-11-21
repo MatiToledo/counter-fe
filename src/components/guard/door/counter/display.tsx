@@ -2,19 +2,20 @@ import { Progress } from "@/components/ui/progress";
 
 interface DisplayProps {
   total: number;
+  branchTotal: number;
   entries: number;
   exits: number;
-  occupancyPercentage: number;
   maxCapacity: number;
 }
 
 export function Display({
   total,
+  branchTotal,
   entries,
   exits,
-  occupancyPercentage,
   maxCapacity,
 }: DisplayProps) {
+  const occupancyPercentage = (branchTotal / maxCapacity) * 100;
   return (
     <>
       <div className="text-9xl font-bold mb-4 mt-8 text-black dark:text-white">
@@ -25,7 +26,7 @@ export function Display({
         <div className="w-full max-w-xs mb-4">
           <Progress value={occupancyPercentage} className="h-2" />
           <div className="flex justify-between text-xs mt-1">
-            <span>{total}</span>
+            <span>{branchTotal}</span>
             <span>{maxCapacity}</span>
           </div>
         </div>

@@ -4,18 +4,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { fetchLogIn, fetchLogUp } from "@/api/endpoints/auth";
 import { LoadingButton } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import PasswordInput from "@/components/ui/password";
 import {
   Select,
   SelectContent,
@@ -26,11 +25,10 @@ import {
 import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
 import { UserRoleEnum, UserSubRoleEnum } from "@/lib/types/enums";
-import { Link } from "lucide-react";
+import { UUID } from "crypto";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import PasswordInput from "@/components/ui/password";
-import { UUID } from "crypto";
+import { fetchLogUp } from "@/api/endpoints/auth";
 const FormSchema = z.object({
   fullName: z.string(),
   email: z.string().email({
@@ -75,12 +73,13 @@ export default function UserForm({ BranchId }: { BranchId: UUID }) {
           email: email,
           role: role,
           subRole: role === "partner" ? "partner" : subRole,
-          BranchId,
+        },
+        Branch: {
+          id: BranchId,
         },
       };
-      const fetch = await fetchLogUp(body);
-      mutateUser();
-      //   push("/dashboard");
+      await fetchLogUp(body);
+      await mutateUser();
     } catch (error: any) {
       toast({
         variant: "destructive",

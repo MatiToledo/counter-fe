@@ -26,6 +26,9 @@ export interface User extends Model {
 export interface Branch extends Model {
   name: string;
   maxCapacity: number;
+  opening: string;
+  closing: string;
+  timeZone: string;
   Users: User[];
 }
 

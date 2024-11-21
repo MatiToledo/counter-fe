@@ -3,7 +3,7 @@ import { DashboardAccessComponent } from "@/components/dashboard/access";
 
 export default function DashboardLogIn() {
   return (
-    <div className="h-screen w-full p-4">
+    <div className="flex h-screen w-full items-center justify-center px-4">
       <DashboardAccessComponent />
     </div>
   );

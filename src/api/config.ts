@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getLSToken } from "@/lib/localStorage";
 import { ApiResponse, MethodType } from "@/lib/types";
 
 export async function fetchAPI(path: RequestInfo, config: object) {
@@ -21,15 +22,8 @@ export async function fetchAPI(path: RequestInfo, config: object) {
   if (status >= 200 && status < 300) return resJson;
 }
 
-function getCookieToken(cookieName: string): string | null {
-  const match = document.cookie.match(
-    new RegExp("(^| )" + cookieName + "=([^;]+)")
-  );
-  return match ? decodeURIComponent(match[2]) : null;
-}
-
 function setConfig(method: MethodType, body?: object) {
-  const token = getCookieToken("token"); // Usa "token" como el nombre de la cookie
+  const token = getLSToken();
   const config = {
     method,
     headers: {

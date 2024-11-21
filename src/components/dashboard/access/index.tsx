@@ -6,7 +6,7 @@ import LogUpTab from "./logUp";
 
 export function DashboardAccessComponent() {
   return (
-    <Tabs defaultValue="logIn" className="mt-[100px] mx-auto max-w-sm">
+    <Tabs defaultValue="logIn" className="mx-auto max-w-sm min-h-[570px]">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="logIn">Ingresar</TabsTrigger>
         <TabsTrigger value="logUp">Registrarse</TabsTrigger>

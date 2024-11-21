@@ -1,6 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fetchCreateBranch, fetchUpdateBranch } from "@/api/endpoints/branch";
+"use client";
+
+import { fetchLogIn, fetchLogUp } from "@/api/endpoints/auth";
+import { AccountDataType } from "@/components/dashboard/access/logUp";
 import { LoadingButton } from "@/components/ui/button";
 import {
   Form,
@@ -11,11 +13,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { TimePickerDemo } from "@/components/ui/time-picker";
 import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
-import { Branch } from "@/lib/types/models";
+import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { UserRoleEnum } from "@/lib/types/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -27,40 +32,46 @@ const FormSchema = z.object({
   ]),
 });
 
-export default function BranchForm({
-  branch,
-  closeDialog,
+export default function LogUpBranchForm({
+  accountData,
 }: {
-  branch: Branch;
-  closeDialog?: () => void;
+  accountData: AccountDataType | undefined;
 }) {
-  const { mutateUser } = useUser();
-  const isEdit = !!branch.id;
   const [loading, setLoading] = useState(false);
-
+  const [opening, setOpening] = useState<Date>();
+  const [closing, setClosing] = useState<Date>();
   const { toast } = useToast();
+  const { mutateUser } = useUser();
+  const { push } = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: branch.name,
-      maxCapacity: branch.maxCapacity || "",
+      name: "",
+      maxCapacity: "",
     },
   });
-
-  useEffect(() => {
-    form.reset({
-      name: branch.name,
-      maxCapacity: branch.maxCapacity || "",
-    });
-  }, [branch]);
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       setLoading(true);
-      isEdit
-        ? await fetchUpdateBranch(branch.id, data)
-        : await fetchCreateBranch(data);
-      closeDialog && closeDialog();
+      const body = {
+        ...accountData,
+        Branch: {
+          name: data.name,
+          maxCapacity: data.maxCapacity,
+          opening,
+          closing,
+        },
+      };
+      await fetchLogUp(body);
+      const fetch = await fetchLogIn({
+        email: accountData?.Auth.email,
+        password: accountData?.Auth.password,
+        role: UserRoleEnum.PARTNER,
+      });
+      saveLSToken(fetch.token);
+      saveLSSubRole(fetch.subRole);
+      await mutateUser();
+      push("/dashboard");
     } catch (error: any) {
       console.log("error: ", error);
       toast({
@@ -68,26 +79,27 @@ export default function BranchForm({
         title: error.message,
       });
     } finally {
-      await mutateUser();
       setLoading(false);
     }
   }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre</FormLabel>
+              <FormLabel>Nombre de la sucursal</FormLabel>
               <FormControl>
-                <Input placeholder="Nombre de la sucursal" {...field} />
+                <Input placeholder="Juan Perez" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="maxCapacity"
@@ -108,8 +120,16 @@ export default function BranchForm({
             </FormItem>
           )}
         />
+        <FormItem className="flex flex-row items-center justify-between">
+          <FormLabel className=" mt-2">Horario de apertura :</FormLabel>
+          <TimePickerDemo date={opening} setDate={setOpening}></TimePickerDemo>
+        </FormItem>
+        <FormItem className="flex flex-row items-center justify-between">
+          <FormLabel className=" mt-2">Horario de cierre :</FormLabel>
+          <TimePickerDemo date={closing} setDate={setClosing}></TimePickerDemo>
+        </FormItem>
         <LoadingButton disabled={!form.formState.isDirty} loading={loading}>
-          {isEdit ? "Actualizar" : "Crear"}
+          Registrarse
         </LoadingButton>
       </form>
     </Form>

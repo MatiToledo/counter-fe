@@ -17,12 +17,13 @@ import {
 import { Input } from "@/components/ui/input";
 import PasswordInput from "../ui/password";
 import { useRouter } from "next/navigation";
-import { useCookies } from "react-cookie";
 import { fetchLogIn } from "@/api/endpoints/auth";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { getLSSubRole, saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { useUser } from "@/hooks/context/user";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -37,8 +38,7 @@ export default function LogInForm() {
   const { push } = useRouter();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const [cookies, setCookie] = useCookies(["token", "subRole"]);
-
+  const { mutateUser } = useUser();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -51,10 +51,10 @@ export default function LogInForm() {
     try {
       setLoading(true);
       const fetch = await fetchLogIn({ ...data, role: UserRoleEnum.USER });
-      setCookie("token", fetch.token);
-      setCookie("subRole", fetch.subRole);
-      console.log("fetch: ", fetch);
-      push(`/${fetch.subRole}`);
+      saveLSToken(fetch.token);
+      saveLSSubRole(fetch.subRole);
+      await mutateUser();
+      push(`/`);
     } catch (error: any) {
       toast({
         variant: "destructive",

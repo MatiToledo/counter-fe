@@ -20,9 +20,12 @@ import {
 } from "../../ui/form";
 
 const FormSchema = z.object({
-  email: z.string().email({
-    message: "El correo electrónico no es válido",
-  }),
+  email: z
+    .string()
+    .email({
+      message: "El correo electrónico no es válido",
+    })
+    .optional(),
   fullName: z.string(),
   role: z.string(),
 });
@@ -47,7 +50,6 @@ export default function ProfileForm({ user }: { user: User }) {
         delete data.email;
       }
       await fetchUpdateUser(user.id, data);
-      await mutateUser();
       form.reset({
         email: data.email,
         fullName: data.fullName,
@@ -62,6 +64,7 @@ export default function ProfileForm({ user }: { user: User }) {
         title: error.message,
       });
     } finally {
+      await mutateUser();
       setLoading(false);
     }
   }
