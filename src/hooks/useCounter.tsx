@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchGetConcurrence } from "@/api/endpoints/concurrence";
+import { socket } from "@/api/socket";
 import { UUID } from "crypto";
 import { useEffect, useState } from "react";
 
-export default function useCounter(BranchId: UUID) {
+export default function useCounter(BranchId: UUID, UserId: UUID) {
   const [isLoading, setIsLoading] = useState(true);
-  const [branchTotal, setBranchTotal] = useState(0);
+  const [totalBranch, setTotalBranch] = useState(0);
   const [total, setTotal] = useState(0);
   const [entries, setEntries] = useState(0);
   const [exits, setExits] = useState(0);
@@ -17,7 +19,7 @@ export default function useCounter(BranchId: UUID) {
         setTotal(res.total);
         setEntries(res.entries);
         setExits(res.exits);
-        setBranchTotal(res.totalConcurrence);
+        setTotalBranch(res.totalConcurrence);
         setIsLoading(false);
       } catch (error) {
         console.log("error: ", error);
@@ -26,19 +28,21 @@ export default function useCounter(BranchId: UUID) {
     fetcher();
   }, []);
 
-  const updateStates = (type: "entry" | "exit", totalConcurrence: number) => {
-    setBranchTotal(totalConcurrence);
-    setTotal((prev) => (type === "entry" ? prev + 1 : prev - 1));
-    if (type === "entry") setEntries((prev) => prev + 1);
-    if (type === "exit") setExits((prev) => prev + 1);
-  };
+  socket.on("concurrence", (result: any) => {
+    const isYou = result.UserId === UserId;
+    if (isYou) {
+      setTotal(result.entries - result.exits);
+      setExits(result.exits);
+      setEntries(result.entries);
+    }
+    setTotalBranch(result.totalBranch);
+  });
 
   return {
-    updateStates,
     isLoading,
     total,
     entries,
     exits,
-    branchTotal,
+    totalBranch,
   };
 }

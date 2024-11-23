@@ -47,7 +47,9 @@ export default function ChatHeader({
             </SelectContent>
           </Select>
         ) : (
-          <h1 className="text-lg font-bold text-primary">Güemes</h1>
+          <h1 className="text-lg font-bold text-primary">
+            {branches.find((b) => b.id === BranchId)?.name}
+          </h1>
         )}
         <span className="text-sm text-muted-foreground flex items-center gap-1">
           <Users className="h-4 w-4" />

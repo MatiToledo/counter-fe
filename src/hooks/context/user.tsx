@@ -25,10 +25,10 @@ export const UserProvider = ({ children }: any) => {
     revalidateOnMount: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
-    onError: () => {
-      removeLSToken();
-      removeLSSubRole();
-      push("/logIn");
+    onSuccess: (result) => {
+      if (!result) {
+        push("/logIn");
+      }
     },
   });
 

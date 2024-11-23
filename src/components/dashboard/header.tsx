@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { DatePickerComponent } from "../datePicker";
 
 export default function DashboardHeader({
   branches,
@@ -27,7 +28,7 @@ export default function DashboardHeader({
   }
 
   return (
-    <header className="flex items-center justify-between p-4 border-b">
+    <header className="flex items-center justify-between p-4 border-b w-full">
       <div className="flex items-center gap-2">
         {canChangeBranch ? (
           <Select defaultValue={BranchId} onValueChange={handleBranchChange}>

@@ -17,11 +17,7 @@ export default function Home() {
   return (
     <Fragment>
       {isLoading && <FallbackComponent />}
-      {user && (
-        <div className="min-h-[calc(100vh-50px)] max-h-[calc(100vh-50px)] text-white flex flex-col items-center p-4 pb-6 ">
-          {COMPONENTS_DICTIONARY[user.subRole]}
-        </div>
-      )}
+      {user && <>{COMPONENTS_DICTIONARY[user.subRole]}</>}
     </Fragment>
   );
 }

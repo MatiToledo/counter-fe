@@ -51,7 +51,7 @@ export default function LogInForm() {
       saveLSToken(fetch.token);
       saveLSSubRole(fetch.subRole);
       await mutateUser();
-      push("/dashboard");
+      push("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
