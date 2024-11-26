@@ -15,7 +15,6 @@ export function CounterDisplay({
   exits,
   maxCapacity,
 }: DisplayProps) {
-  console.log("totalBranch: ", totalBranch);
   const occupancyPercentage = (totalBranch / maxCapacity) * 100;
   return (
     <>

@@ -2,17 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { fetchUpdateConcurrence } from "@/api/endpoints/concurrence";
-import { useToast } from "@/hooks/use-toast";
+import { socket } from "@/api/socket";
 import useCounter from "@/hooks/useCounter";
 import { UUID } from "crypto";
 import { useState } from "react";
 import { Buttons } from "./buttons";
 import { CounterDisplay } from "./display";
-import { Branch } from "@/lib/types/models";
-import checkIfCanUpdateConcurrence from "@/utils/checkIfCanUpdateConcurrence";
-import toastError from "@/utils/toastError";
-import { socket } from "@/api/socket";
 type CounterComponentProps = {
   BranchId: UUID;
   UserId: UUID;
@@ -27,7 +22,8 @@ export default function CounterComponent({
   const [showEntryTypes, setShowEntryTypes] = useState(false);
   const { isLoading, total, entries, exits, totalBranch } = useCounter(
     BranchId,
-    UserId
+    UserId,
+    "user"
   );
 
   const handleExit = async () => {

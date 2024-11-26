@@ -19,7 +19,7 @@ export default function DashboardHeader({
 }: {
   branches: Branch[];
   BranchId: UUID;
-  setBranchId: Dispatch<SetStateAction<UUID>>;
+  setBranchId: (selectedBranch: UUID) => void;
 }) {
   const canChangeBranch = branches.length > 1;
 

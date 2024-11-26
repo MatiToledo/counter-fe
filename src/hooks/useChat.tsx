@@ -12,7 +12,7 @@ export default function useChat(BranchId: UUID, UserId: UUID) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const { data, mutate } = useSWR(
-    `/message/${BranchId}?page=${page}&limit=15`,
+    `/message/branch/${BranchId}?page=${page}&limit=15`,
     (url) => fetchGetMessagesByBranchId(url),
     {
       revalidateOnMount: true,

@@ -25,7 +25,6 @@ export default function MessagesChat({ BranchId, UserId }: MessagesChatProps) {
     haveNewMessage,
     setHaveNewMessage,
   } = useChat(BranchId, UserId);
-  console.log("isLoadingMore: ", isLoadingMore);
 
   const lastMessage = messages[messages.length - 1];
 

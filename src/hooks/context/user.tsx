@@ -34,10 +34,7 @@ export const UserProvider = ({ children }: any) => {
 
   const user = data as User;
   async function mutateUser() {
-    console.log("POR MUTATE");
-
     await mutate(undefined, { revalidate: true });
-    console.log("MUTATE");
   }
 
   return (

@@ -2,7 +2,7 @@
 "use client";
 
 import { Users } from "lucide-react";
-import MetricCard from "../card";
+import MetricCard from "./card";
 
 export function ConcurrenceActualPerHours({ data, maxCapacity }: any) {
   return (

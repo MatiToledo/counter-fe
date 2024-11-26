@@ -1,11 +1,11 @@
-import { UUID } from "crypto";
-import { useEffect, useRef, useState } from "react";
-import { connectSocket, socket } from "../api/socket";
-import { Message } from "@/lib/types/models";
-import { useNewMessageStore } from "@/lib/state";
-import { useToast } from "./use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { useNewMessageStore } from "@/lib/state";
+import { Message } from "@/lib/types/models";
+import { UUID } from "crypto";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { connectSocket, socket } from "../api/socket";
+import { useToast } from "./use-toast";
 
 export default function useSocket(BranchId: UUID, UserId: UUID) {
   const { toast } = useToast();
@@ -15,6 +15,10 @@ export default function useSocket(BranchId: UUID, UserId: UUID) {
   const setNewMessage = useNewMessageStore((state) => state.setHaveNewMessage);
 
   useEffect(() => {
+    connectSocket();
+  }, []);
+
+  useEffect(() => {
     if (!socket) return;
 
     if (previousBranchIdRef.current) {
@@ -22,6 +26,7 @@ export default function useSocket(BranchId: UUID, UserId: UUID) {
     }
 
     socket.emit("joinBranch", BranchId, UserId);
+    console.log(`Unido a la rama: ${BranchId}`);
 
     socket.on("message", (msg: Message) => {
       const isYou = msg.UserId === UserId;

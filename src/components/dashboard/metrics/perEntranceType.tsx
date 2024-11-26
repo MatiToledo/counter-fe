@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import MetricCard from "../card";
+import MetricCard from "./card";
 
 export function EntranceTypePerHours({ data }: any) {
   return (

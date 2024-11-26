@@ -1,7 +1,7 @@
-import { Fragment } from "react";
+"use client";
+import { User } from "@/lib/types/models";
 import { GuardAlert } from "./alert";
 import CounterComponent from "./counter";
-import { User } from "@/lib/types/models";
 
 export default function GuardDoorComponent({ user }: { user: User }) {
   const branch = user.Branches[0];
@@ -12,7 +12,7 @@ export default function GuardDoorComponent({ user }: { user: User }) {
         maxCapacity={branch.maxCapacity}
         UserId={user.id}
       />
-      <GuardAlert></GuardAlert>
+      <GuardAlert BranchId={branch.id}></GuardAlert>
     </div>
   );
 }

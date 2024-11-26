@@ -6,8 +6,9 @@ const SOCKET_URL = "http://localhost:3080";
 
 export const connectSocket = () => {
   const token = getLSToken();
+  const isBrowser = typeof window !== "undefined";
 
-  if (token) {
+  if (token && isBrowser) {
     socket = io(SOCKET_URL, {
       reconnection: true,
       extraHeaders: {

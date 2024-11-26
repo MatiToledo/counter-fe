@@ -19,9 +19,6 @@ export function DatePickerComponent() {
   const [date, setDate] = React.useState<Date>(today);
   const [isOpen, setIsOpen] = React.useState(false); // Estado para controlar el popover
 
-  console.log("today: ", today);
-  console.log("date: ", date);
-
   const handleSelectDate = (value: Date) => {
     setDate(value);
     setIsOpen(false); // Cerrar el popover al seleccionar una fecha

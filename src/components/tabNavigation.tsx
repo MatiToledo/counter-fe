@@ -2,25 +2,43 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNewMessageStore } from "@/lib/state";
-import { Home, MessageCircle, Settings } from "lucide-react";
+import { User } from "@/lib/types/models";
+import {
+  ChartNoAxesCombinedIcon,
+  Home,
+  MessageCircle,
+  Settings,
+} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function TabNavigation() {
+export default function TabNavigation({ user }: { user: User }) {
+  console.log("user: ", user);
   const newMessage = useNewMessageStore((state) => state.haveNewMessage);
-
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const tabs = [
+  const [tabs, setTabs] = useState([
     { icon: Home, path: `/` },
     { icon: MessageCircle, path: "/chat" },
     { icon: Settings, path: "/settings" },
-  ];
+  ]);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (
+      user?.role === "partner" &&
+      !tabs.some((tab) => tab.path === "/metrics")
+    ) {
+      setTabs((prev) => {
+        const newTab = { icon: ChartNoAxesCombinedIcon, path: `/metrics` };
+        return [...prev.slice(0, 1), newTab, ...prev.slice(1)];
+      });
+    }
+  }, []);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background ">
       <Tabs value={pathname} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 h-[50px] rounded-none">
+        <TabsList className="grid w-full grid-cols-auto h-[50px] rounded-none">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.path}

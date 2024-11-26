@@ -126,7 +126,7 @@ export default function MetricCard({
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {data.total && (

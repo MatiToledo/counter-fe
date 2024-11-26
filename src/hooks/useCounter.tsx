@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fetchGetConcurrence } from "@/api/endpoints/concurrence";
+"use client";
+import {
+  fetchGetConcurrenceByBranch,
+  fetchGetConcurrenceByBranchAndUser,
+} from "@/api/endpoints/concurrence";
 import { socket } from "@/api/socket";
 import { UUID } from "crypto";
 import { useEffect, useState } from "react";
+import { useToast } from "./use-toast";
 
-export default function useCounter(BranchId: UUID, UserId: UUID) {
+export default function useCounter(
+  BranchId: UUID,
+  UserId: UUID,
+  type: "user" | "partner"
+) {
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [totalBranch, setTotalBranch] = useState(0);
   const [total, setTotal] = useState(0);
@@ -15,11 +25,16 @@ export default function useCounter(BranchId: UUID, UserId: UUID) {
     setIsLoading(true);
     async function fetcher() {
       try {
-        const res = await fetchGetConcurrence(BranchId);
+        let res;
+        if (type === "user") {
+          res = await fetchGetConcurrenceByBranchAndUser(BranchId);
+        } else {
+          res = await fetchGetConcurrenceByBranch(BranchId);
+        }
         setTotal(res.total);
         setEntries(res.entries);
         setExits(res.exits);
-        setTotalBranch(res.totalConcurrence);
+        setTotalBranch(res.totalBranch);
         setIsLoading(false);
       } catch (error) {
         console.log("error: ", error);
@@ -28,7 +43,9 @@ export default function useCounter(BranchId: UUID, UserId: UUID) {
     fetcher();
   }, []);
 
-  socket.on("concurrence", (result: any) => {
+  socket?.on("concurrence", (result: any) => {
+    if (type !== "user") return;
+    console.log("ESCUCHO SOCIO");
     const isYou = result.UserId === UserId;
     if (isYou) {
       setTotal(result.entries - result.exits);
@@ -36,6 +53,23 @@ export default function useCounter(BranchId: UUID, UserId: UUID) {
       setEntries(result.entries);
     }
     setTotalBranch(result.totalBranch);
+  });
+
+  socket?.on("concurrence_partner", (result: any) => {
+    if (type !== "partner") return;
+    console.log("ESCUCHO PARTNER");
+
+    setTotal(result.entries - result.exits);
+    setExits(result.exits);
+    setEntries(result.entries);
+    setTotalBranch(result.totalBranch);
+  });
+
+  socket?.on("error", (error: string) => {
+    toast({
+      variant: "destructive",
+      title: error,
+    });
   });
 
   return {

@@ -5,7 +5,7 @@ export interface InitialConcurrence {
   total: number;
   entries: number;
   exits: number;
-  totalConcurrence: number;
+  totalBranch: number;
 }
 
 export async function fetchUpdateConcurrence(
@@ -15,9 +15,15 @@ export async function fetchUpdateConcurrence(
   return res.result;
 }
 
-export async function fetchGetConcurrence(
+export async function fetchGetConcurrenceByBranchAndUser(
   BranchId: UUID
 ): Promise<InitialConcurrence> {
-  const res = await fetchApiGet(`/concurrence/${BranchId}`);
+  const res = await fetchApiGet(`/concurrence/branch/${BranchId}`);
+  return res.result;
+}
+export async function fetchGetConcurrenceByBranch(
+  BranchId: UUID
+): Promise<InitialConcurrence> {
+  const res = await fetchApiGet(`/concurrence/dashboard/branch/${BranchId}`);
   return res.result;
 }

@@ -2,7 +2,7 @@
 "use client";
 
 import { DollarSign } from "lucide-react";
-import MetricCard from "../card";
+import MetricCard from "./card";
 
 export function EarningsPerHours({ data }: any) {
   return (

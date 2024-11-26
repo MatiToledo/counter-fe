@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AlertCircle, AlertTriangle, HelpCircle } from "lucide-react";
+import { ALERTS_DICTIONARY } from "@/lib/dictionaries";
 
 interface AlertDialogProps {
   open: boolean;
@@ -25,24 +25,14 @@ export function AlertDialogComponent({
           <DialogTitle>Enviar Alerta</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4">
-          <Button
-            onClick={() => onSendAlert("authorities")}
-            className="flex items-center justify-start gap-2">
-            <AlertCircle className="h-4 w-4" />
-            Intervención de autoridades
-          </Button>
-          <Button
-            onClick={() => onSendAlert("disturbance")}
-            className="flex items-center justify-start gap-2">
-            <AlertTriangle className="h-4 w-4" />
-            Disturbios en puerta
-          </Button>
-          <Button
-            onClick={() => onSendAlert("help")}
-            className="flex items-center justify-start gap-2">
-            <HelpCircle className="h-4 w-4" />
-            Necesidad de ayuda adicional
-          </Button>
+          {ALERTS_DICTIONARY.map((alert) => (
+            <Button
+              key={alert.type}
+              onClick={() => onSendAlert(alert.type)}
+              className="flex items-center justify-start gap-2">
+              {alert.label}
+            </Button>
+          ))}
         </div>
       </DialogContent>
     </Dialog>

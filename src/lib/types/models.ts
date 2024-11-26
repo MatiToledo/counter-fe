@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { UserRoleEnum, UserSubRoleEnum } from "./enums";
+import { AlertTypeEnum, UserRoleEnum, UserSubRoleEnum } from "./enums";
 
 interface Model {
   id: UUID;
@@ -47,4 +47,12 @@ export interface Concurrence extends Model {
   hourIntervalStart: number;
   entries: number;
   exits: number;
+}
+
+export interface Alert extends Model {
+  BranchId: UUID;
+  sender: string;
+  timestamp: string;
+
+  type: AlertTypeEnum;
 }

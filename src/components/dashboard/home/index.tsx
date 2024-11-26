@@ -1,35 +1,45 @@
 "use client";
-import { Branch, User } from "@/lib/types/models";
-import { useState } from "react";
-import UsersDashboard from "../metrics/users";
-import DashboardHeader from "../header";
-import { ConcurrenceActualPerHours } from "../metrics/concurrence/perHour";
+import { CounterDisplay } from "@/components/guard/door/counter/display";
+import useCounter from "@/hooks/useCounter";
 import useMetrics from "@/hooks/useMetrics";
-import { EntranceTypePerHours } from "../metrics/concurrence/perEntranceType";
-import { EarningsPerHours } from "../metrics/concurrence/earningsPerHour";
+import { useSelectedBranchStore } from "@/lib/state";
+import { User } from "@/lib/types/models";
+import DashboardHeader from "../header";
+import LatestAlerts from "./alerts";
 
 export default function DashboardHomeComponent({ user }: { user: User }) {
-  const [BranchId, setBranchId] = useState(user.Branches[0].id);
-  const { data } = useMetrics(BranchId);
-  console.log("data: ", data);
-  const branch = user.Branches.find((b) => b.id === BranchId);
+  const selectedBranch = useSelectedBranchStore(
+    (state) => state.selectedBranch
+  );
+  const setSelectedBranch = useSelectedBranchStore(
+    (state) => state.setSelectedBranch
+  );
+  const { isLoading, total, entries, exits, totalBranch } = useCounter(
+    selectedBranch,
+    user.id,
+    "partner"
+  );
+
+  const branch = user.Branches.find((b) => b.id === selectedBranch);
 
   return (
     <>
       <DashboardHeader
         branches={user.Branches}
-        BranchId={BranchId}
-        setBranchId={setBranchId}></DashboardHeader>
-      {data && (
-        <div className="max-h-[calc(100vh - 111px)] p-4 flex flex-col gap-4 overflow-y-auto w-full">
-          <ConcurrenceActualPerHours
-            data={data.entriesPerHour}
-            maxCapacity={branch?.maxCapacity}></ConcurrenceActualPerHours>
-          <EarningsPerHours data={data.earningsPerHour}></EarningsPerHours>
-          <EntranceTypePerHours data={data.typeEntries}></EntranceTypePerHours>
-          <UsersDashboard
-            branch={branch as Branch}
-            UserId={user.id}></UsersDashboard>
+        BranchId={selectedBranch}
+        setBranchId={setSelectedBranch}></DashboardHeader>
+      {!isLoading && (
+        <div className="min-h-[calc(100vh-111px)] max-h-[calc(100vh-111px)] p-4 flex flex-col gap-4 overflow-y-auto w-full items-center">
+          {!isLoading && (
+            <CounterDisplay
+              total={total}
+              totalBranch={totalBranch}
+              entries={entries}
+              exits={exits}
+              maxCapacity={branch?.maxCapacity as number}
+            />
+          )}
+          <LatestAlerts BranchId={selectedBranch}></LatestAlerts>
         </div>
       )}
     </>
