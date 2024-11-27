@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Users } from "lucide-react";
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -12,6 +13,7 @@ import {
   XAxis,
 } from "recharts";
 
+import { DatePickerComponent } from "@/components/datePicker";
 import {
   Card,
   CardContent,
@@ -25,23 +27,32 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { DatePickerComponent } from "@/components/datePicker";
+import { useEffect, useState } from "react";
+import { DateTime } from "luxon";
+import { RotateCcw } from "lucide-react";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  comparison: {
+    label: "Comparacion",
+    color: "hsl(var(--chart-2))",
+  },
+  total: {
+    label: "Total",
     color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
 type MetricCardProps = {
+  identifier: "entriesPerHour" | "earningsPerHour" | "typeEntries";
   data: any;
   title: string;
   icon?: any;
   maxCapacity?: number;
   xIdentifier: string;
   yIdentifier: string;
-  type: "line" | "bar";
+  compareVs: any;
+  setCompareVs: any;
+  type: "line" | "bar" | "area";
 };
 
 export default function MetricCard({
@@ -51,6 +62,9 @@ export default function MetricCard({
   maxCapacity,
   xIdentifier,
   yIdentifier,
+  identifier,
+  compareVs,
+  setCompareVs,
   type,
 }: MetricCardProps) {
   const CHART_TYPE = {
@@ -75,12 +89,13 @@ export default function MetricCard({
           content={<ChartTooltipContent indicator="line" />}
         />
         <Line
+          // isAnimationActive={false}
           dataKey={yIdentifier}
           type="natural"
-          stroke="var(--color-desktop)"
+          stroke="var(--color-total)"
           strokeWidth={2}
           dot={{
-            fill: "var(--color-desktop)",
+            fill: "var(--color-total)",
           }}
           activeDot={{
             r: 6,
@@ -94,6 +109,68 @@ export default function MetricCard({
           />
         </Line>
       </LineChart>
+    ),
+    area: (
+      <AreaChart
+        accessibilityLayer
+        data={data.metrics}
+        margin={{
+          top: 20,
+          left: 12,
+          right: 12,
+        }}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey={xIdentifier}
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+        />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <Area
+          // isAnimationActive={false}
+          dataKey={"comparison"}
+          type="natural"
+          fill="var(--color-comparison)"
+          fillOpacity={0.2}
+          stroke="var(--color-comparison)"
+          stackId="a"
+          dot={{
+            fill: "var(--color-comparison)",
+          }}
+          activeDot={{
+            r: 6,
+          }}>
+          {/* <LabelList
+            position="top"
+            offset={8}
+            dataKey={data.comparison}
+            className="fill-foreground "
+            fontSize={12}
+          /> */}
+        </Area>
+        <Area
+          // isAnimationActive={false}
+          dataKey={yIdentifier}
+          type="natural"
+          fill="var(--color-total)"
+          fillOpacity={0.4}
+          stroke="var(--color-total)"
+          dot={{
+            fill: "var(--color-total)",
+          }}
+          activeDot={{
+            r: 6,
+          }}>
+          {/* <LabelList
+            position="top"
+            offset={8}
+            dataKey={data.metrics[0].label ? "label" : "total"}
+            className="fill-foreground "
+            fontSize={12}
+          /> */}
+        </Area>
+      </AreaChart>
     ),
     bar: (
       <BarChart
@@ -113,7 +190,11 @@ export default function MetricCard({
           cursor={false}
           content={<ChartTooltipContent hideLabel />}
         />
-        <Bar dataKey={yIdentifier} fill="var(--color-desktop)" radius={8}>
+        <Bar
+          // isAnimationActive={false}
+          dataKey={yIdentifier}
+          fill="var(--color-total)"
+          radius={8}>
           <LabelList
             position="top"
             offset={12}
@@ -125,8 +206,31 @@ export default function MetricCard({
     ),
   };
 
+  const [date, setDate] = useState<Date | undefined>(
+    compareVs[identifier]
+      ? DateTime.fromISO(compareVs[identifier]).toJSDate()
+      : undefined
+  );
+
+  useEffect(() => {
+    if (date) {
+      setCompareVs((prev: any) => ({
+        ...prev,
+        [identifier]: DateTime.fromJSDate(date).toFormat("yyyy-MM-dd"),
+      }));
+    }
+  }, [date]);
+
+  function resetCompare() {
+    setCompareVs((prev: any) => ({
+      ...prev,
+      [identifier]: false,
+    }));
+    setDate(undefined);
+  }
+
   return (
-    <Card className="w-full">
+    <Card className="w-full" key={identifier}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {data.total && (
@@ -144,7 +248,16 @@ export default function MetricCard({
       </CardContent>
       <CardFooter className="flex justify-between">
         <p className="text-sm text-muted-foreground">Comparar con:</p>
-        <DatePickerComponent></DatePickerComponent>
+        <div className="flex items-center gap-3">
+          {date && (
+            <RotateCcw
+              onClick={resetCompare}
+              className="h-4 w-4 text-muted-foreground"></RotateCcw>
+          )}
+          <DatePickerComponent
+            date={date}
+            setDate={setDate}></DatePickerComponent>
+        </div>
       </CardFooter>
     </Card>
   );

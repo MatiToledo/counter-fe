@@ -4,7 +4,7 @@ import { Message } from "@/lib/types/models";
 import { UUID } from "crypto";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { connectSocket, socket } from "../api/socket";
+import { socket } from "../api/socket";
 import { useToast } from "./use-toast";
 
 export default function useSocket(BranchId: UUID, UserId: UUID) {
@@ -14,20 +14,7 @@ export default function useSocket(BranchId: UUID, UserId: UUID) {
   const previousBranchIdRef = useRef<UUID | null>(null);
   const setNewMessage = useNewMessageStore((state) => state.setHaveNewMessage);
 
-  useEffect(() => {
-    connectSocket();
-  }, []);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    if (previousBranchIdRef.current) {
-      socket.emit("leaveBranch", previousBranchIdRef.current);
-    }
-
-    socket.emit("joinBranch", BranchId, UserId);
-    console.log(`Unido a la rama: ${BranchId}`);
-
+  function listenSocketEvents() {
     socket.on("message", (msg: Message) => {
       const isYou = msg.UserId === UserId;
       if (!isYou && pathname !== "/chat") {
@@ -43,6 +30,18 @@ export default function useSocket(BranchId: UUID, UserId: UUID) {
         });
       }
     });
+  }
+
+  useEffect(() => {
+    if (!socket || !BranchId || !UserId) return;
+
+    if (previousBranchIdRef.current) {
+      socket.emit("leaveBranch", previousBranchIdRef.current);
+    }
+
+    socket.emit("joinBranch", BranchId, UserId);
+
+    listenSocketEvents();
 
     previousBranchIdRef.current = BranchId;
 
@@ -51,7 +50,7 @@ export default function useSocket(BranchId: UUID, UserId: UUID) {
         socket.emit("leaveBranch", previousBranchIdRef.current);
       }
     };
-  }, [BranchId, socket]);
+  }, [BranchId, UserId, socket]);
 
-  return;
+  return { socket };
 }

@@ -11,10 +11,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { push } = useRouter();
   const { user } = useUser();
   const isAuthenticated = !!getLSToken();
+  const selectedBranch = useSelectedBranchStore(
+    (state) => state.selectedBranch
+  );
   const setSelectedBranch = useSelectedBranchStore(
     (state) => state.setSelectedBranch
   );
-  useSocket(user?.Branches[0].id, user?.id);
+  useSocket(selectedBranch, user?.id);
 
   useEffect(() => {
     if (!isAuthenticated) {

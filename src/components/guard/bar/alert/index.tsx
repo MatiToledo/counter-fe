@@ -8,7 +8,6 @@ export function GuardBarAlert() {
   const [showAlertOptions, setShowAlertOptions] = useState(false);
 
   const sendAlert = (type: string) => {
-    console.log(`Alerta enviada: ${type}`);
     setShowAlertOptions(false);
   };
 

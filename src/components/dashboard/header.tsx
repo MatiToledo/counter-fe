@@ -11,27 +11,28 @@ import {
   SelectValue,
 } from "../ui/select";
 import { DatePickerComponent } from "../datePicker";
+import { useSelectedBranchStore } from "@/lib/state";
 
-export default function DashboardHeader({
-  branches,
-  BranchId,
-  setBranchId,
-}: {
-  branches: Branch[];
-  BranchId: UUID;
-  setBranchId: (selectedBranch: UUID) => void;
-}) {
+export default function DashboardHeader({ branches }: { branches: Branch[] }) {
+  const selectedBranch = useSelectedBranchStore(
+    (state) => state.selectedBranch
+  );
+  const setSelectedBranch = useSelectedBranchStore(
+    (state) => state.setSelectedBranch
+  );
   const canChangeBranch = branches.length > 1;
 
   function handleBranchChange(value: string) {
-    setBranchId(value as UUID);
+    setSelectedBranch(value as UUID);
   }
 
   return (
     <header className="flex items-center justify-between p-4 border-b w-full">
       <div className="flex items-center gap-2">
         {canChangeBranch ? (
-          <Select defaultValue={BranchId} onValueChange={handleBranchChange}>
+          <Select
+            defaultValue={selectedBranch}
+            onValueChange={handleBranchChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a fruit" />
             </SelectTrigger>

@@ -1,12 +1,13 @@
 "use client";
 import { User } from "@/lib/types/models";
-import { Bolt, ShieldCheck, Store } from "lucide-react";
+import { Bolt, ShieldCheck, SquareUserRound, Store } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProfileForm from "../forms/settings/profile";
 import SecurityForm from "../forms/settings/security";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import BranchTab from "./branch";
 import PreferencesTab from "./preferences";
+import StaffTab from "./staff";
 
 export default function MenuSettings({ user }: { user: User }) {
   const [tabs, setTabs] = useState([
@@ -25,7 +26,7 @@ export default function MenuSettings({ user }: { user: User }) {
     {
       icon: Bolt,
       id: "preferences",
-      text: "Preferencias",
+      text: "App",
       element: <PreferencesTab />,
     },
   ]);
@@ -43,6 +44,12 @@ export default function MenuSettings({ user }: { user: User }) {
               id: "branch",
               text: multipleBranch ? "Sucursales" : "Sucursal",
               element: <BranchTab branches={user.Branches} />,
+            },
+            {
+              icon: SquareUserRound,
+              id: "members",
+              text: "Personal",
+              element: <StaffTab branches={user.Branches} UserId={user.id} />,
             },
             ...prev.slice(1),
           ];

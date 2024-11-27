@@ -18,6 +18,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { TimePickerDemo } from "@/components/ui/time-picker";
+import { DateTime } from "luxon";
 
 const FormSchema = z.object({
   name: z.string(),
@@ -34,10 +36,20 @@ export default function BranchForm({
   branch: Branch;
   closeDialog?: () => void;
 }) {
+  console.log("branch: ", branch.opening);
   const { mutateUser } = useUser();
   const isEdit = !!branch.id;
   const [loading, setLoading] = useState(false);
-
+  const [opening, setOpening] = useState<Date | undefined>(
+    isEdit
+      ? DateTime.fromFormat(branch.opening, "HH:mm:ss").toJSDate()
+      : undefined
+  );
+  const [closing, setClosing] = useState<Date | undefined>(
+    isEdit
+      ? DateTime.fromFormat(branch.closing, "HH:mm:ss").toJSDate()
+      : undefined
+  );
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -56,13 +68,13 @@ export default function BranchForm({
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
+      const body = { ...data, opening, closing };
       setLoading(true);
       isEdit
-        ? await fetchUpdateBranch(branch.id, data)
-        : await fetchCreateBranch(data);
+        ? await fetchUpdateBranch(branch.id, body)
+        : await fetchCreateBranch(body);
       closeDialog && closeDialog();
     } catch (error: any) {
-      console.log("error: ", error);
       toast({
         variant: "destructive",
         title: error.message,
@@ -108,6 +120,14 @@ export default function BranchForm({
             </FormItem>
           )}
         />
+        <FormItem className="flex flex-row items-center justify-between">
+          <FormLabel className=" mt-2">Horario de apertura :</FormLabel>
+          <TimePickerDemo date={opening} setDate={setOpening}></TimePickerDemo>
+        </FormItem>
+        <FormItem className="flex flex-row items-center justify-between">
+          <FormLabel className=" mt-2">Horario de cierre :</FormLabel>
+          <TimePickerDemo date={closing} setDate={setClosing}></TimePickerDemo>
+        </FormItem>
         <LoadingButton disabled={!form.formState.isDirty} loading={loading}>
           {isEdit ? "Actualizar" : "Crear"}
         </LoadingButton>

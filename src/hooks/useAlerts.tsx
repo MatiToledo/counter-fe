@@ -9,7 +9,6 @@ export default function useAlerts(BranchId: UUID) {
   );
 
   socket?.on("newAlert", () => {
-    console.log("nueva alerta");
     mutate();
   });
 

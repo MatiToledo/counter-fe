@@ -13,7 +13,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function TabNavigation({ user }: { user: User }) {
-  console.log("user: ", user);
   const newMessage = useNewMessageStore((state) => state.haveNewMessage);
   const [tabs, setTabs] = useState([
     { icon: Home, path: `/` },

@@ -2,8 +2,7 @@
 
 import { useNewMessageStore, useSelectedBranchStore } from "@/lib/state";
 import { User } from "@/lib/types/models";
-import { UUID } from "crypto";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import ChatHeader from "./header";
 import MessagesChat from "./messages";
 import SendMessage from "./send";

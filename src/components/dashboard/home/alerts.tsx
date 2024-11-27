@@ -7,26 +7,6 @@ import { DateTime } from "luxon";
 
 export default function LatestAlerts({ BranchId }: { BranchId: UUID }) {
   const { data } = useAlerts(BranchId);
-  console.log("data: ", data);
-  const latestAlerts = [
-    { label: "Disturbios", sender: "Juan Pérez", time: "14:30" },
-    { label: "Volumen excedido", sender: "María García", time: "15:45" },
-    {
-      label: "Solicitud de ayuda de guardias",
-      sender: "Carlos Rodríguez",
-      time: "16:20",
-    },
-    {
-      label: "Solicitud de ayuda de guardias",
-      sender: "Carlos Rodríguez",
-      time: "16:20",
-    },
-    {
-      label: "Solicitud de ayuda de guardias",
-      sender: "Carlos Rodríguez",
-      time: "16:20",
-    },
-  ];
 
   return (
     <>
@@ -41,7 +21,13 @@ export default function LatestAlerts({ BranchId }: { BranchId: UUID }) {
             <div className="space-y-4">
               {data.result.map((alert: Alert) => (
                 <div key={alert.id} className="flex items-center space-x-4">
-                  <div className="w-1 h-12 bg-blue-500 rounded-full"></div>
+                  <div
+                    className="w-1 h-12  rounded-full"
+                    style={{
+                      backgroundColor:
+                        ALERTS_DICTIONARY.find((a) => a.type === alert.type)
+                          ?.color || "#cccccc",
+                    }}></div>
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium leading-none text-gray-900 dark:text-gray-100">
                       {

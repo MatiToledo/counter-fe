@@ -73,7 +73,6 @@ export default function LogUpBranchForm({
       await mutateUser();
       push("/dashboard");
     } catch (error: any) {
-      console.log("error: ", error);
       toast({
         variant: "destructive",
         title: error.message,

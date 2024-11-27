@@ -1,3 +1,4 @@
+"use client";
 import { UUID } from "crypto";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

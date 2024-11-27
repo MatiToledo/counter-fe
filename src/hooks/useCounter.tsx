@@ -36,16 +36,13 @@ export default function useCounter(
         setExits(res.exits);
         setTotalBranch(res.totalBranch);
         setIsLoading(false);
-      } catch (error) {
-        console.log("error: ", error);
-      }
+      } catch (error) {}
     }
     fetcher();
   }, []);
 
   socket?.on("concurrence", (result: any) => {
     if (type !== "user") return;
-    console.log("ESCUCHO SOCIO");
     const isYou = result.UserId === UserId;
     if (isYou) {
       setTotal(result.entries - result.exits);
@@ -57,7 +54,6 @@ export default function useCounter(
 
   socket?.on("concurrence_partner", (result: any) => {
     if (type !== "partner") return;
-    console.log("ESCUCHO PARTNER");
 
     setTotal(result.entries - result.exits);
     setExits(result.exits);

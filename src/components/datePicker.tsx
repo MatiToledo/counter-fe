@@ -1,9 +1,4 @@
 "use client";
-
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import * as React from "react";
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -11,22 +6,43 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useUser } from "@/hooks/context/user";
+import { useSelectedBranchStore } from "@/lib/state";
+import { Branch } from "@/lib/types/models";
 import { cn } from "@/lib/utils";
+import { checkIfBranchIsOpen } from "@/utils/checkIfCanUpdateConcurrence";
+import { es } from "date-fns/locale";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { DateTime } from "luxon";
+import * as React from "react";
+import { Dispatch, SetStateAction } from "react";
 
-export function DatePickerComponent() {
-  const today = DateTime.now().toJSDate();
-  const [date, setDate] = React.useState<Date>(today);
-  const [isOpen, setIsOpen] = React.useState(false); // Estado para controlar el popover
+export function DatePickerComponent({
+  date,
+  setDate,
+}: {
+  date: Date | undefined;
+  setDate: Dispatch<SetStateAction<Date | undefined>>;
+}) {
+  const selectedBranch = useSelectedBranchStore(
+    (state) => state.selectedBranch
+  );
 
-  const handleSelectDate = (value: Date) => {
-    setDate(value);
-    setIsOpen(false); // Cerrar el popover al seleccionar una fecha
+  const { user } = useUser();
+  const branch = user.Branches.find((b) => b.id === selectedBranch) as Branch;
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { opening, closing, timeZone } = branch;
+  const handleSelectDate = (value: Date | undefined) => {
+    if (value) {
+      setDate(value);
+    }
+    setIsOpen(false);
   };
 
+  const isBranchOpen = checkIfBranchIsOpen(opening, closing, timeZone);
   const displayDate = date
     ? DateTime.fromJSDate(date).toFormat("dd/MM/yyyy")
-    : "Selecciona una fecha";
+    : "Hoy";
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -34,7 +50,7 @@ export function DatePickerComponent() {
         <Button
           variant={"outline"}
           className={cn(
-            "w-auto justify-start text-left font-normal",
+            "w-auto justify-start text-left font-normal hover:bg-transparent",
             !date && "text-muted-foreground"
           )}>
           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -43,9 +59,15 @@ export function DatePickerComponent() {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <Calendar
+          locale={es}
           mode="single"
           selected={date}
-          onSelect={handleSelectDate} // Usar la función modificada
+          disabled={{
+            after: isBranchOpen
+              ? new Date()
+              : DateTime.now().minus({ days: 2 }).toJSDate(),
+          }}
+          onSelect={handleSelectDate}
           initialFocus
         />
       </PopoverContent>

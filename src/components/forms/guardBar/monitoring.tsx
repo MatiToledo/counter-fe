@@ -39,9 +39,7 @@ export default function MonitoringForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("data: ", data);
-  }
+  function onSubmit(data: z.infer<typeof FormSchema>) {}
 
   return (
     <Form {...form}>
