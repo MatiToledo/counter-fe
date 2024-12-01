@@ -3,15 +3,20 @@ import useAlerts from "@/hooks/useAlerts";
 import { ALERTS_DICTIONARY } from "@/lib/dictionaries";
 import { Alert } from "@/lib/types/models";
 import { UUID } from "crypto";
-import { DateTime } from "luxon";
 
-export default function LatestAlerts({ BranchId }: { BranchId: UUID }) {
+export default function LatestAlerts({
+  BranchId,
+  userFullName,
+}: {
+  BranchId: UUID;
+  userFullName: string;
+}) {
   const { data } = useAlerts(BranchId);
 
   return (
     <>
       {data && (
-        <Card className="w-full h-full">
+        <Card className="w-full  h-full">
           <CardHeader>
             <CardTitle className="text-gray-900 dark:text-gray-100">
               Últimas Alertas
@@ -36,7 +41,7 @@ export default function LatestAlerts({ BranchId }: { BranchId: UUID }) {
                       }
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {alert.sender}
+                      {alert.sender === userFullName ? "Tú" : alert.sender}
                     </p>
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">

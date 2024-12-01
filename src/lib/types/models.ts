@@ -1,5 +1,10 @@
 import { UUID } from "crypto";
-import { AlertTypeEnum, UserRoleEnum, UserSubRoleEnum } from "./enums";
+import {
+  AlertTypeEnum,
+  MonitoringValuesEnum,
+  UserRoleEnum,
+  UserSubRoleEnum,
+} from "./enums";
 
 interface Model {
   id: UUID;
@@ -55,4 +60,13 @@ export interface Alert extends Model {
   timestamp: string;
 
   type: AlertTypeEnum;
+}
+
+export interface Monitoring extends Model {
+  branchId: number;
+  date: string;
+  peopleInBars: MonitoringValuesEnum;
+  peopleInDance: MonitoringValuesEnum;
+  hourIntervalStart: number;
+  BranchId: UUID;
 }

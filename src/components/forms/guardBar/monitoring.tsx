@@ -1,22 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { fetchCreateMonitoring } from "@/api/endpoints/monitoring";
+import { LoadingButton } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToast } from "@/hooks/use-toast";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,7 +28,15 @@ const FormSchema = z.object({
   }),
 });
 
-export default function MonitoringForm() {
+export default function MonitoringForm({
+  BranchId,
+  alreadyExists,
+  nextUpdateOn,
+  mutate,
+}: any) {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -39,64 +45,121 @@ export default function MonitoringForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {}
+  const options = [
+    { value: "empty", label: "Nadie" },
+    { value: "few", label: "Poca" },
+    { value: "aLot", label: "Mucha" },
+    { value: "tooMuch", label: "Demasiada" },
+  ];
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      if (alreadyExists) {
+        toast({
+          variant: "destructive",
+          title: `Ya se ha registrado la informacion de la sucursal, actualice nuevamente luego de las ${nextUpdateOn}`,
+        });
+        return;
+      }
+      setLoading(true);
+      const fetch = await fetchCreateMonitoring({
+        ...data,
+        BranchId,
+      });
+      toast({
+        variant: "default",
+        title: fetch.message,
+      });
+      mutate();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: error.message,
+      });
+    } finally {
+      form.reset();
+      setLoading(false);
+    }
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-        <FormField
-          control={form.control}
-          name="peopleInBars"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <div className="grid grid-cols-2 gap-6">
+          {/* Bar Column */}
+          <FormField
+            control={form.control}
+            name="peopleInBars"
+            render={({ field }) => (
+              <FormItem className="space-y-4">
+                <FormLabel className="text-white underline underline-offset-4">
+                  Gente en Barra
+                </FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione el estado de las barras" />
-                  </SelectTrigger>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    className="flex flex-col space-y-1">
+                    {options.map((option) => (
+                      <FormItem
+                        key={`bar-${option.value}`}
+                        className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem
+                            value={option.value}
+                            className="border-gray-600 text-white"
+                          />
+                        </FormControl>
+                        <FormLabel className="text-sm text-gray-300">
+                          {option.label}
+                        </FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="noAccumulation">
-                    Sin acumulación
-                  </SelectItem>
-                  <SelectItem value="little">Poca</SelectItem>
-                  <SelectItem value="quite">Bastante</SelectItem>
-                  <SelectItem value="tooMuch">Demasiada</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="peopleInDance"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              </FormItem>
+            )}
+          />
+          {/* Pista Column */}
+          <FormField
+            control={form.control}
+            name="peopleInDance"
+            render={({ field }) => (
+              <FormItem className="space-y-4">
+                <FormLabel className="text-white underline underline-offset-4">
+                  Gente en Pista
+                </FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione el estado de la pista de baile" />
-                  </SelectTrigger>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    className="flex flex-col space-y-1">
+                    {options.map((option) => (
+                      <FormItem
+                        key={`pista-${option.value}`}
+                        className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem
+                            value={option.value}
+                            className="border-gray-600 text-white"
+                          />
+                        </FormControl>
+                        <FormLabel className="text-sm text-gray-300">
+                          {option.label}
+                        </FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="noAccumulation">
-                    Sin acumulación
-                  </SelectItem>
-                  <SelectItem value="little">Poca</SelectItem>
-                  <SelectItem value="quite">Bastante</SelectItem>
-                  <SelectItem value="tooMuch">Demasiada</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Actualizar</Button>
+              </FormItem>
+            )}
+          />
+        </div>
+        <LoadingButton
+          loading={loading}
+          disabled={!form.formState.isDirty && !form.formState.isValid}>
+          Actualizar
+        </LoadingButton>
       </form>
     </Form>
   );

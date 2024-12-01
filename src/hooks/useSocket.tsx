@@ -39,6 +39,8 @@ export default function useSocket(BranchId: UUID, UserId: UUID) {
       socket.emit("leaveBranch", previousBranchIdRef.current);
     }
 
+    console.log("BranchId: ", BranchId);
+    console.log("UserId: ", UserId);
     socket.emit("joinBranch", BranchId, UserId);
 
     listenSocketEvents();

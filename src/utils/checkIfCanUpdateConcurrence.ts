@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Branch } from "@/lib/types/models";
 import { DateTime } from "luxon";
 
 // export default function checkIfCanUpdateConcurrence(
@@ -38,11 +39,8 @@ import { DateTime } from "luxon";
 //   }
 // }
 
-export function checkIfBranchIsOpen(
-  opening: string,
-  closing: string,
-  timeZone: string
-): boolean {
+export function checkIfBranchIsOpen(branch: Branch): boolean {
+  const { opening, closing, timeZone } = branch;
   const now = DateTime.now().setZone(timeZone);
 
   const cleanOpening = opening.slice(0, 5);

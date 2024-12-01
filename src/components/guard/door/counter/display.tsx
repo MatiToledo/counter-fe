@@ -18,12 +18,12 @@ export function CounterDisplay({
   const occupancyPercentage = (totalBranch / maxCapacity) * 100;
   return (
     <>
-      <div className="text-9xl font-bold mb-4 text-black dark:text-white">
+      <div className="text-9xl font-bold  text-black dark:text-white">
         {total}
       </div>
 
       {maxCapacity && (
-        <div className="w-full max-w-xs mb-4">
+        <div className="w-full max-w-xs mb-4 ">
           <Progress value={occupancyPercentage} className="h-2" />
           <div className="flex justify-between text-xs mt-1">
             <span>{totalBranch}</span>
@@ -32,7 +32,7 @@ export function CounterDisplay({
         </div>
       )}
 
-      <div className="w-full max-w-xs flex justify-between mb-2 text-center text-gray-400">
+      <div className="w-full max-w-xs flex justify-between  text-center text-gray-400">
         <div>
           <div>Salidas</div>
           <div className="text-2xl">{exits}</div>

@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ALERTS_DICTIONARY } from "@/lib/dictionaries";
 import {
   AlertCircle,
   CircleSlash2,
@@ -28,27 +29,27 @@ export function AlertDialogComponent({
   const alerts = [
     {
       icon: <AlertCircle className="h-4 w-4" />,
-      title: "Disturbios",
+      type: "DISTURBANCE_AT_BAR",
     },
     {
       icon: <Martini className="h-4 w-4" />,
-      title: "Persona Ebria",
+      type: "DRUNK_PERSON",
     },
     {
       icon: <HandHelping className="h-4 w-4" />,
-      title: "Solicitar Ayuda",
+      type: "REQUEST_ASSISTANCE",
     },
     {
       icon: <CircleSlash2 className="h-4 w-4" />,
-      title: "Capacidad Excedida",
+      type: "OVER_CAPACITY",
     },
     {
       icon: <Volume2 className="h-4 w-4" />,
-      title: "Volumen Alto",
+      type: "EXCESSIVE_VOLUME",
     },
     {
       icon: <Siren className="h-4 w-4" />,
-      title: "Actividad Sospechosa",
+      type: "SUSPICIOUS_EMPLOYEE_BEHAVIOR",
     },
   ];
 
@@ -62,10 +63,10 @@ export function AlertDialogComponent({
           {alerts.map((alert, index) => (
             <Button
               key={index}
-              onClick={() => onSendAlert(alert.title)}
+              onClick={() => onSendAlert(alert.type)}
               className="flex items-center justify-start gap-2">
               {alert.icon}
-              {alert.title}
+              {ALERTS_DICTIONARY.find((a) => a.type === alert.type)?.label}
             </Button>
           ))}
         </div>

@@ -12,6 +12,7 @@ import {
 } from "../ui/select";
 import { DatePickerComponent } from "../datePicker";
 import { useSelectedBranchStore } from "@/lib/state";
+import { usePathname } from "next/navigation";
 
 export default function DashboardHeader({ branches }: { branches: Branch[] }) {
   const selectedBranch = useSelectedBranchStore(
@@ -20,6 +21,7 @@ export default function DashboardHeader({ branches }: { branches: Branch[] }) {
   const setSelectedBranch = useSelectedBranchStore(
     (state) => state.setSelectedBranch
   );
+  const pathname = usePathname();
   const canChangeBranch = branches.length > 1;
 
   function handleBranchChange(value: string) {
@@ -27,14 +29,14 @@ export default function DashboardHeader({ branches }: { branches: Branch[] }) {
   }
 
   return (
-    <header className="flex items-center justify-between p-4 border-b w-full">
+    <header className="flex items-center justify-between p-4 border-b w-full ">
       <div className="flex items-center gap-2">
         {canChangeBranch ? (
           <Select
             defaultValue={selectedBranch}
             onValueChange={handleBranchChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a fruit" />
+            <SelectTrigger className="w-auto gap-2">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -50,6 +52,9 @@ export default function DashboardHeader({ branches }: { branches: Branch[] }) {
           <h1 className="text-lg font-bold text-primary">{branches[0].name}</h1>
         )}
       </div>
+      {pathname === "/metrics" && (
+        <DatePickerComponent param={"date"}></DatePickerComponent>
+      )}
     </header>
   );
 }

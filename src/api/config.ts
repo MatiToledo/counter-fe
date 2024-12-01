@@ -3,11 +3,11 @@ import { getLSToken } from "@/lib/localStorage";
 import { ApiResponse, MethodType } from "@/lib/types";
 
 export async function fetchAPI(path: RequestInfo, config: object) {
-  const BASE_API_URL =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3080/v1"
-      : "https://api.pul.com.ar:443/v1";
-  // const BASE_API_URL = "http://10.0.2.2:3080/v1";
+  // const BASE_API_URL =
+  //   process.env.NODE_ENV === "development"
+  //     ? "http://localhost:3080/v1"
+  //     : "https://api.pul.com.ar:443/v1";
+  const BASE_API_URL = "http://10.0.2.2:3080/v1";
   const url = BASE_API_URL + path;
 
   const fullConfig = {

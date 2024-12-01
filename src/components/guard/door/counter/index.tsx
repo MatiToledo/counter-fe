@@ -8,6 +8,7 @@ import { UUID } from "crypto";
 import { useState } from "react";
 import { Buttons } from "./buttons";
 import { CounterDisplay } from "./display";
+import LatestAlerts from "@/components/dashboard/home/alerts";
 type CounterComponentProps = {
   BranchId: UUID;
   UserId: UUID;
@@ -41,7 +42,7 @@ export default function CounterComponent({
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-between flex-col flex-1">
+    <div className="w-full h-full flex items-center justify-between flex-col flex-1 gap-4">
       <div className="w-full max-w-xs flex flex-col items-center">
         {!isLoading && (
           <CounterDisplay
@@ -52,6 +53,9 @@ export default function CounterComponent({
             maxCapacity={maxCapacity}
           />
         )}
+      </div>
+      <div className="max-w-xs">
+        <LatestAlerts BranchId={BranchId} userFullName={"asd"} />
       </div>
 
       <div className="w-full max-w-xs flex flex-col">

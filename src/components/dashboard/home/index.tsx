@@ -12,9 +12,7 @@ export default function DashboardHomeComponent({ user }: { user: User }) {
   const selectedBranch = useSelectedBranchStore(
     (state) => state.selectedBranch
   );
-  const setSelectedBranch = useSelectedBranchStore(
-    (state) => state.setSelectedBranch
-  );
+
   const { isLoading, total, entries, exits, totalBranch } = useCounter(
     selectedBranch,
     user.id,
@@ -25,10 +23,7 @@ export default function DashboardHomeComponent({ user }: { user: User }) {
 
   return (
     <>
-      <DashboardHeader
-        branches={user.Branches}
-        BranchId={selectedBranch}
-        setBranchId={setSelectedBranch}></DashboardHeader>
+      <DashboardHeader branches={user.Branches}></DashboardHeader>
       {!isLoading && (
         <div className="min-h-[calc(100vh-111px)] max-h-[calc(100vh-111px)] p-4 flex flex-col gap-4 overflow-y-auto w-full items-center">
           <div className="w-full items-center flex flex-col ">
@@ -43,7 +38,10 @@ export default function DashboardHomeComponent({ user }: { user: User }) {
             )}
           </div>
           <Monitoring />
-          <LatestAlerts BranchId={selectedBranch} />
+          <LatestAlerts
+            BranchId={selectedBranch}
+            userFullName={user.fullName}
+          />
         </div>
       )}
     </>

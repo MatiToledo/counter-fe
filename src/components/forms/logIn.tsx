@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
+import { Button, LoadingButton } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -96,10 +96,9 @@ export default function LogInForm() {
             </FormItem>
           )}
         />
-        <Button disabled={loading} type="submit">
-          {loading && <Loader2 className="animate-spin" />}
+        <LoadingButton loading={loading} disabled={!form.formState.isDirty}>
           Ingresar
-        </Button>
+        </LoadingButton>
       </form>
     </Form>
   );

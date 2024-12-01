@@ -17,3 +17,10 @@ export enum AlertTypeEnum {
   EXCESSIVE_VOLUME = "EXCESSIVE_VOLUME",
   SUSPICIOUS_EMPLOYEE_BEHAVIOR = "SUSPICIOUS_EMPLOYEE_BEHAVIOR",
 }
+
+export enum MonitoringValuesEnum {
+  EMPTY = "empty",
+  FEW = "few",
+  A_LOT = "aLot",
+  TOO_MANY = "tooMany",
+}

@@ -37,7 +37,7 @@ export function Buttons({
 
   return (
     <>
-      <div className="w-full max-w-xs flex justify-between gap-4 mb-4">
+      <div className="w-full max-w-xs flex justify-between gap-4">
         <Button
           className="flex-1 h-24 text-4xl bg-primary hover:bg-primary/90"
           onClick={onExit}>

@@ -36,7 +36,6 @@ export default function BranchForm({
   branch: Branch;
   closeDialog?: () => void;
 }) {
-  console.log("branch: ", branch.opening);
   const { mutateUser } = useUser();
   const isEdit = !!branch.id;
   const [loading, setLoading] = useState(false);
