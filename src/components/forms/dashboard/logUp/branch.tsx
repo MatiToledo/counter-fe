@@ -30,6 +30,10 @@ const FormSchema = z.object({
     z.number().min(1, "Debe ser mayor que 0"),
     z.literal(""),
   ]),
+  profitPerPerson: z.union([
+    z.number().min(1, "Debe ser mayor que 0"),
+    z.literal(""),
+  ]),
 });
 
 export default function LogUpBranchForm({
@@ -38,8 +42,8 @@ export default function LogUpBranchForm({
   accountData: AccountDataType | undefined;
 }) {
   const [loading, setLoading] = useState(false);
-  const [opening, setOpening] = useState<Date>();
-  const [closing, setClosing] = useState<Date>();
+  const [opening, setOpening] = useState<Date | undefined>(undefined);
+  const [closing, setClosing] = useState<Date | undefined>(undefined);
   const { toast } = useToast();
   const { mutateUser } = useUser();
   const { push } = useRouter();
@@ -48,6 +52,7 @@ export default function LogUpBranchForm({
     defaultValues: {
       name: "",
       maxCapacity: "",
+      profitPerPerson: "",
     },
   });
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -58,6 +63,7 @@ export default function LogUpBranchForm({
         Branch: {
           name: data.name,
           maxCapacity: data.maxCapacity,
+          profitPerPerson: data.profitPerPerson,
           opening,
           closing,
         },
@@ -111,7 +117,29 @@ export default function LogUpBranchForm({
                   {...field}
                   type="number"
                   onChange={(e) => {
-                    field.onChange(Number(e.target.value));
+                    const value = e.target.value;
+                    field.onChange(value === "" ? "" : Number(value));
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="profitPerPerson"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ganancia por persona</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Ganancia por persona"
+                  {...field}
+                  type="number"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    field.onChange(value === "" ? "" : Number(value));
                   }}
                 />
               </FormControl>

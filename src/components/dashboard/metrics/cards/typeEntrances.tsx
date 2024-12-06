@@ -14,6 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { TYPE_ENTRANCES_VALUES_DICTIONARY } from "@/lib/dictionaries";
 import {
   Area,
   AreaChart,
@@ -53,6 +54,9 @@ export default function TypeEntrancesCard({ data }: any) {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
+              tickFormatter={(value: string) =>
+                TYPE_ENTRANCES_VALUES_DICTIONARY[value]
+              }
             />
             <ChartTooltip
               cursor={false}

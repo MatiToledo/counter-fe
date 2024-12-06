@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { fetchGetMe } from "@/api/endpoints/user";
-import { getLSToken, removeLSSubRole, removeLSToken } from "@/lib/localStorage";
 import { User } from "@/lib/types/models";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import useSWR from "swr";
 interface UserContextProps {
   user: User;
   isLoading: boolean;
   mutateUser: any;
+  resetUser: any;
 }
 
 const UserContext = createContext<UserContextProps>({
   user: {} as User,
   isLoading: true,
   mutateUser: async () => {},
+  resetUser: async () => {},
 });
 
 export const UserProvider = ({ children }: any) => {
@@ -33,6 +34,9 @@ export const UserProvider = ({ children }: any) => {
   });
 
   const user = data as User;
+  async function resetUser() {
+    await mutate(undefined, false);
+  }
   async function mutateUser() {
     await mutate(undefined, { revalidate: true });
   }
@@ -43,6 +47,7 @@ export const UserProvider = ({ children }: any) => {
         user,
         isLoading,
         mutateUser,
+        resetUser,
       }}>
       {children}
     </UserContext.Provider>

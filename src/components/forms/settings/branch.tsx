@@ -27,6 +27,10 @@ const FormSchema = z.object({
     z.number().min(1, "Debe ser mayor que 0"),
     z.literal(""),
   ]),
+  profitPerPerson: z.union([
+    z.number().min(1, "Debe ser mayor que 0"),
+    z.literal(""),
+  ]),
 });
 
 export default function BranchForm({
@@ -39,22 +43,22 @@ export default function BranchForm({
   const { mutateUser } = useUser();
   const isEdit = !!branch.id;
   const [loading, setLoading] = useState(false);
-  const [opening, setOpening] = useState<Date | undefined>(
-    isEdit
-      ? DateTime.fromFormat(branch.opening, "HH:mm:ss").toJSDate()
-      : undefined
-  );
-  const [closing, setClosing] = useState<Date | undefined>(
-    isEdit
-      ? DateTime.fromFormat(branch.closing, "HH:mm:ss").toJSDate()
-      : undefined
-  );
+  const initialOpening = isEdit
+    ? DateTime.fromFormat(branch.opening, "HH:mm:ss").toJSDate()
+    : undefined;
+  const initialClosing = isEdit
+    ? DateTime.fromFormat(branch.closing, "HH:mm:ss").toJSDate()
+    : undefined;
+
+  const [opening, setOpening] = useState<Date | undefined>(initialOpening);
+  const [closing, setClosing] = useState<Date | undefined>(initialClosing);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: branch.name,
       maxCapacity: branch.maxCapacity || "",
+      profitPerPerson: branch.profitPerPerson || "",
     },
   });
 
@@ -62,8 +66,17 @@ export default function BranchForm({
     form.reset({
       name: branch.name,
       maxCapacity: branch.maxCapacity || "",
+      profitPerPerson: branch.profitPerPerson || "",
     });
+    setOpening(initialOpening);
+    setClosing(initialClosing);
   }, [branch]);
+
+  const hasTimeChanged =
+    opening?.getTime() !== initialOpening?.getTime() ||
+    closing?.getTime() !== initialClosing?.getTime();
+  const haveSomeChange = form.formState.isDirty || hasTimeChanged;
+  console.log("haveSomeChange: ", haveSomeChange);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -72,6 +85,11 @@ export default function BranchForm({
       isEdit
         ? await fetchUpdateBranch(branch.id, body)
         : await fetchCreateBranch(body);
+      toast({
+        title: isEdit
+          ? "Sucursal actualizada exitosamente"
+          : "Sucursal creada exitosamente",
+      });
       closeDialog && closeDialog();
     } catch (error: any) {
       toast({
@@ -111,7 +129,29 @@ export default function BranchForm({
                   {...field}
                   type="number"
                   onChange={(e) => {
-                    field.onChange(Number(e.target.value));
+                    const value = e.target.value;
+                    field.onChange(value === "" ? "" : Number(value));
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="profitPerPerson"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ganancia por persona</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Ganancia por persona"
+                  {...field}
+                  type="number"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    field.onChange(value === "" ? "" : Number(value));
                   }}
                 />
               </FormControl>
@@ -127,7 +167,7 @@ export default function BranchForm({
           <FormLabel className=" mt-2">Horario de cierre :</FormLabel>
           <TimePickerDemo date={closing} setDate={setClosing}></TimePickerDemo>
         </FormItem>
-        <LoadingButton disabled={!form.formState.isDirty} loading={loading}>
+        <LoadingButton disabled={!haveSomeChange} loading={loading}>
           {isEdit ? "Actualizar" : "Crear"}
         </LoadingButton>
       </form>

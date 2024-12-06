@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { fetchLogUp } from "@/api/endpoints/auth";
 import { LoadingButton } from "@/components/ui/button";
 import {
   Form,
@@ -24,42 +26,48 @@ import {
 } from "@/components/ui/select";
 import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
-import { UserRoleEnum, UserSubRoleEnum } from "@/lib/types/enums";
+import { User } from "@/lib/types/models";
 import { UUID } from "crypto";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { fetchLogUp } from "@/api/endpoints/auth";
-const FormSchema = z.object({
-  fullName: z.string(),
-  email: z.string().email({
-    message: "El correo electrónico no es válido",
-  }),
-  role: z.enum([UserRoleEnum.PARTNER, UserRoleEnum.USER]),
-  subRole: z
-    .enum([UserSubRoleEnum.GUARD_BAR, UserSubRoleEnum.GUARD_DOOR])
-    .nullable(),
-  password: z.string().min(8, {
-    message: "La contraseña debe tener al menos 8 caracteres",
-  }),
-});
+import { fetchUpdateUser } from "@/api/endpoints/user";
 
-export default function UserForm({ BranchId }: { BranchId: UUID }) {
-  const { push } = useRouter();
+export default function UserForm({
+  BranchId,
+  userSelected,
+}: {
+  BranchId: UUID;
+  userSelected?: User | null;
+}) {
+  const isEdit = !!userSelected?.id;
   const { mutateUser } = useUser();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const FormSchema = z.object({
+    fullName: z.string(),
+    email: z.string().email({
+      message: "El correo electrónico no es válido",
+    }),
+    role: z.enum(["partner", "user"]),
+    subRole: z.enum(["guardBar", "guardDoor"]).nullable(),
+    password: isEdit
+      ? z.string().optional()
+      : z.string().min(8, {
+          message: "La contraseña debe tener al menos 8 caracteres",
+        }),
+  });
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      role: undefined,
-      subRole: undefined,
+      fullName: isEdit ? userSelected?.fullName : "",
+      email: isEdit ? userSelected?.email : "",
+      role: isEdit ? userSelected?.role : undefined,
+      subRole: isEdit ? (userSelected?.subRole as any) : undefined,
       password: "",
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log("data: ", data);
     try {
       setLoading(true);
       const { email, password, fullName, role, subRole } = data;
@@ -78,7 +86,11 @@ export default function UserForm({ BranchId }: { BranchId: UUID }) {
           id: BranchId,
         },
       };
-      await fetchLogUp(body);
+
+      isEdit
+        ? await fetchUpdateUser(userSelected.id, body.User)
+        : await fetchLogUp(body);
+
       await mutateUser();
     } catch (error: any) {
       toast({
@@ -97,7 +109,6 @@ export default function UserForm({ BranchId }: { BranchId: UUID }) {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="grid grid-rows-[auto,1fr] gap-4 min-h-[472px] relative">
-        {/* Campos del formulario */}
         <div className="grid gap-4">
           <FormField
             control={form.control}
@@ -125,35 +136,38 @@ export default function UserForm({ BranchId }: { BranchId: UUID }) {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contraseña</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder="Enter your password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!isEdit && (
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contraseña</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      placeholder="Enter your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name="role"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Rol</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Rol" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="user">Miembro</SelectItem>
+                    <SelectItem value="user">Personal</SelectItem>
                     <SelectItem value="partner">Socio</SelectItem>
                   </SelectContent>
                 </Select>
@@ -168,15 +182,17 @@ export default function UserForm({ BranchId }: { BranchId: UUID }) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sub Rol</FormLabel>
-                  <Select onValueChange={field.onChange}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value as any}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Sub Rol" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="guardBar">Pista</SelectItem>
-                      <SelectItem value="guardDoor">Puerta</SelectItem>
+                      <SelectItem value="guardBar">Guardia Pista</SelectItem>
+                      <SelectItem value="guardDoor">Guardia Puerta</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -188,7 +204,7 @@ export default function UserForm({ BranchId }: { BranchId: UUID }) {
 
         <div className=" mt-4 w-full absolute bottom-2">
           <LoadingButton loading={loading} disabled={false}>
-            Crear
+            {isEdit ? "Editar" : "Crear"}
           </LoadingButton>
         </div>
       </form>

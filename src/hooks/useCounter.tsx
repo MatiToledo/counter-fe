@@ -36,7 +36,9 @@ export default function useCounter(
         setExits(res.exits);
         setTotalBranch(res.totalBranch);
         setIsLoading(false);
-      } catch (error) {}
+      } catch (error) {
+        console.log("error: ", error);
+      }
     }
     fetcher();
   }, []);

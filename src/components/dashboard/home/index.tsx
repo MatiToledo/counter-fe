@@ -1,7 +1,6 @@
 "use client";
 import { CounterDisplay } from "@/components/guard/door/counter/display";
 import useCounter from "@/hooks/useCounter";
-import useMetrics from "@/hooks/useMetrics";
 import { useSelectedBranchStore } from "@/lib/state";
 import { User } from "@/lib/types/models";
 import DashboardHeader from "../header";
@@ -37,7 +36,7 @@ export default function DashboardHomeComponent({ user }: { user: User }) {
               />
             )}
           </div>
-          <Monitoring />
+          <Monitoring BranchId={selectedBranch} />
           <LatestAlerts
             BranchId={selectedBranch}
             userFullName={user.fullName}

@@ -6,9 +6,14 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { removeLSSubRole, removeLSToken } from "@/lib/localStorage";
+import { useUser } from "@/hooks/context/user";
+import { fetchDeleteUser } from "@/api/endpoints/user";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PreferencesTab() {
   const { theme, setTheme } = useTheme();
+  const { user, resetUser } = useUser();
+  const { toast } = useToast();
   const { push } = useRouter();
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -16,8 +21,22 @@ export default function PreferencesTab() {
   const handleLogout = () => {
     removeLSToken();
     removeLSSubRole();
+    resetUser();
     push("/logIn");
   };
+
+  async function handleDeleteAccount() {
+    try {
+      await fetchDeleteUser(user.id);
+      handleLogout();
+    } catch (error) {
+      console.log("error: ", error);
+      toast({
+        variant: "destructive",
+        title: "Error al eliminar la cuenta",
+      });
+    }
+  }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -66,7 +85,7 @@ export default function PreferencesTab() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleLogout}
+          onClick={handleDeleteAccount}
           aria-label="Cerrar sesión">
           <Trash2 className="h-5 w-5 text-black dark:text-white" />
         </Button>

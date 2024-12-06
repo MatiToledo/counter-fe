@@ -22,6 +22,7 @@ import { UserRoleEnum } from "@/lib/types/enums";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { useSelectedBranchStore } from "@/lib/state";
 const FormSchema = z.object({
   email: z.string().email({
     message: "El correo electrónico no es válido",
@@ -32,8 +33,11 @@ const FormSchema = z.object({
 });
 
 export default function LogInForm() {
+  const setSelectedBranch = useSelectedBranchStore(
+    (state) => state.setSelectedBranch
+  );
   const { push } = useRouter();
-  const { mutateUser } = useUser();
+  const { mutateUser, user } = useUser();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -51,6 +55,7 @@ export default function LogInForm() {
       saveLSToken(fetch.token);
       saveLSSubRole(fetch.subRole);
       await mutateUser();
+      setSelectedBranch(user.Branches[0].id);
       push("/");
     } catch (error: any) {
       toast({

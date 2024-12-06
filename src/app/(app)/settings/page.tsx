@@ -2,10 +2,12 @@
 import FallbackComponent from "@/components/fallback";
 import SettingsComponent from "@/components/settings";
 import { useUser } from "@/hooks/context/user";
+import useListenMessages from "@/hooks/useListenMessages";
 import { Fragment } from "react";
 
 export default function Setting() {
   const { isLoading, user } = useUser();
+  useListenMessages(user.id);
   return (
     <Fragment>
       {isLoading && <FallbackComponent />}

@@ -34,6 +34,7 @@ export interface Branch extends Model {
   opening: string;
   closing: string;
   timeZone: string;
+  profitPerPerson: number;
   Users: User[];
 }
 
@@ -67,6 +68,8 @@ export interface Monitoring extends Model {
   date: string;
   peopleInBars: MonitoringValuesEnum;
   peopleInDance: MonitoringValuesEnum;
+  sender: string;
+  timestamp: string;
   hourIntervalStart: number;
   BranchId: UUID;
 }

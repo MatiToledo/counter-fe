@@ -17,7 +17,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const setSelectedBranch = useSelectedBranchStore(
     (state) => state.setSelectedBranch
   );
-  useSocket(selectedBranch, user?.id);
+  const { socket } = useSocket(selectedBranch, user?.id);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -32,13 +32,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   return (
-    <Fragment>
-      {user && (
+    <>
+      {user && socket && (
         <>
           {children}
           <TabNavigation user={user}></TabNavigation>
         </>
       )}
-    </Fragment>
+    </>
   );
 }

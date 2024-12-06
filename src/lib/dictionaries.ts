@@ -59,3 +59,25 @@ export const ALERTS_DICTIONARY = [
     color: "#D2B48C",
   },
 ];
+
+export const MONITORING_VALUES_DICTIONARY = {
+  empty: "Nadie",
+  few: "Poca",
+  aLot: "Mucha",
+  tooMany: "Demasiada",
+};
+
+export const TYPE_ENTRANCES_VALUES_DICTIONARY: Record<string, string> = {
+  paid: "paga",
+  free: "free",
+  qr: "qr",
+  vip: "vip",
+  guests: "invitados",
+};
+
+export const STAFF_COLUMNS: Record<string, string> = {
+  fullName: "Nombre",
+  subRole: "Rol",
+  email: "Email",
+  actions: "Acciones",
+};
