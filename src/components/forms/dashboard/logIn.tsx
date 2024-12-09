@@ -21,8 +21,12 @@ import { useToast } from "@/hooks/use-toast";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
-import { useSelectedBranchStore } from "@/lib/state";
+import {
+  getLSBranchId,
+  saveLSBranchId,
+  saveLSSubRole,
+  saveLSToken,
+} from "@/lib/localStorage";
 const FormSchema = z.object({
   email: z.string().email({
     message: "El correo electrónico no es válido",
@@ -33,9 +37,7 @@ const FormSchema = z.object({
 });
 
 export default function LogInForm() {
-  const setSelectedBranch = useSelectedBranchStore(
-    (state) => state.setSelectedBranch
-  );
+  const setSelectedBranch = getLSBranchId();
   const { push } = useRouter();
   const { mutateUser, user } = useUser();
   const [loading, setLoading] = useState(false);
@@ -55,7 +57,6 @@ export default function LogInForm() {
       saveLSToken(fetch.token);
       saveLSSubRole(fetch.subRole);
       await mutateUser();
-      setSelectedBranch(user.Branches[0].id);
       push("/");
     } catch (error: any) {
       toast({
@@ -77,7 +78,7 @@ export default function LogInForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="m@example.com" {...field} />
+                <Input placeholder="Ingrese el email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -91,7 +92,7 @@ export default function LogInForm() {
               <FormLabel>Contraseña</FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="Enter your password"
+                  placeholder="Ingrese su contraseña"
                   {...field}></PasswordInput>
               </FormControl>
               <FormMessage />

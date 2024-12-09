@@ -2,7 +2,6 @@
 import { User } from "@/lib/types/models";
 import { GuardAlert } from "./alert";
 import CounterComponent from "./counter";
-import LatestAlerts from "@/components/dashboard/home/alerts";
 
 export default function GuardDoorComponent({ user }: { user: User }) {
   const branch = user.Branches[0];

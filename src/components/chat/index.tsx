@@ -1,24 +1,21 @@
 "use client";
 
-import { useNewMessageStore, useSelectedBranchStore } from "@/lib/state";
 import { User } from "@/lib/types/models";
 import { useEffect } from "react";
 import ChatHeader from "./header";
 import MessagesChat from "./messages";
 import SendMessage from "./send";
+import {
+  getLSBranchId,
+  saveLSBranchId,
+  saveLSNewMessage,
+} from "@/lib/localStorage";
 
 export default function ChatComponent({ user }: { user: User }) {
-  const setNewMessage = useNewMessageStore((state) => state.setHaveNewMessage);
-  const selectedBranch = useSelectedBranchStore(
-    (state) => state.selectedBranch
-  );
-  const setSelectedBranch = useSelectedBranchStore(
-    (state) => state.setSelectedBranch
-  );
-
+  const selectedBranch = getLSBranchId();
   useEffect(() => {
-    setSelectedBranch(user.Branches[0].id);
-    setNewMessage(false);
+    saveLSBranchId(user.Branches[0].id);
+    saveLSNewMessage(false);
   }, []);
 
   return (
@@ -30,7 +27,6 @@ export default function ChatComponent({ user }: { user: User }) {
         branches={user.Branches}
         role={user.role}
         BranchId={selectedBranch}
-        setBranchId={setSelectedBranch}
       />
       <MessagesChat BranchId={selectedBranch} UserId={user.id} />
       <SendMessage BranchId={selectedBranch} UserId={user.id}></SendMessage>

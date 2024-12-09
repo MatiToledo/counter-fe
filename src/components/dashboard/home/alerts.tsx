@@ -15,8 +15,8 @@ export default function LatestAlerts({
 
   return (
     <>
-      {data && (
-        <Card className="w-full  h-full">
+      {data?.result.length > 0 && (
+        <Card className="w-full  h-full min-w-full min-w-md">
           <CardHeader>
             <CardTitle className="text-gray-900 dark:text-gray-100">
               Últimas Alertas
@@ -24,7 +24,7 @@ export default function LatestAlerts({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {data.result.map((alert: Alert) => (
+              {data?.result.map((alert: Alert) => (
                 <div key={alert.id} className="flex items-center space-x-4">
                   <div
                     className="w-1 h-12  rounded-full"

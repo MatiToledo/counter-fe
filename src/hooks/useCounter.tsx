@@ -18,6 +18,7 @@ export default function useCounter(
   const [isLoading, setIsLoading] = useState(true);
   const [totalBranch, setTotalBranch] = useState(0);
   const [total, setTotal] = useState(0);
+  console.log("total: ", total);
   const [entries, setEntries] = useState(0);
   const [exits, setExits] = useState(0);
 

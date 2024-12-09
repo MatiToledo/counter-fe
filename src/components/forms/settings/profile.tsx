@@ -91,7 +91,7 @@ export default function ProfileForm({ user }: { user: User }) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="m@example.com" {...field} />
+                <Input placeholder="Ingrese el email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

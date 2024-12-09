@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNewMessageStore } from "@/lib/state";
+import { getLSNewMessage } from "@/lib/localStorage";
 import { User } from "@/lib/types/models";
 import {
   ChartNoAxesCombinedIcon,
@@ -13,7 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function TabNavigation({ user }: { user: User }) {
-  const newMessage = useNewMessageStore((state) => state.haveNewMessage);
+  const newMessage = getLSNewMessage();
   const [tabs, setTabs] = useState([
     { icon: Home, path: `/` },
     { icon: MessageCircle, path: "/chat" },

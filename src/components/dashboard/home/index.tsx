@@ -1,16 +1,14 @@
 "use client";
 import { CounterDisplay } from "@/components/guard/door/counter/display";
 import useCounter from "@/hooks/useCounter";
-import { useSelectedBranchStore } from "@/lib/state";
+import { getLSBranchId } from "@/lib/localStorage";
 import { User } from "@/lib/types/models";
 import DashboardHeader from "../header";
 import LatestAlerts from "./alerts";
 import Monitoring from "./monitoring";
 
 export default function DashboardHomeComponent({ user }: { user: User }) {
-  const selectedBranch = useSelectedBranchStore(
-    (state) => state.selectedBranch
-  );
+  const selectedBranch = getLSBranchId();
 
   const { isLoading, total, entries, exits, totalBranch } = useCounter(
     selectedBranch,

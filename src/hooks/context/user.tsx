@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { fetchGetMe } from "@/api/endpoints/user";
+import { saveLSBranchId } from "@/lib/localStorage";
 import { User } from "@/lib/types/models";
 import { useRouter } from "next/navigation";
 import { createContext, useContext } from "react";
@@ -27,6 +28,8 @@ export const UserProvider = ({ children }: any) => {
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
     onSuccess: (result) => {
+      saveLSBranchId(result.Branches[0].id);
+
       if (!result) {
         push("/logIn");
       }

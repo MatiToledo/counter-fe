@@ -1,7 +1,9 @@
 "use client";
+import { getLSBranchId, saveLSBranchId } from "@/lib/localStorage";
 import { Branch } from "@/lib/types/models";
 import { UUID } from "crypto";
-import { Dispatch, SetStateAction } from "react";
+import { usePathname } from "next/navigation";
+import { DatePickerComponent } from "../datePicker";
 import {
   Select,
   SelectContent,
@@ -10,22 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { DatePickerComponent } from "../datePicker";
-import { useSelectedBranchStore } from "@/lib/state";
-import { usePathname } from "next/navigation";
 
 export default function DashboardHeader({ branches }: { branches: Branch[] }) {
-  const selectedBranch = useSelectedBranchStore(
-    (state) => state.selectedBranch
-  );
-  const setSelectedBranch = useSelectedBranchStore(
-    (state) => state.setSelectedBranch
-  );
+  const selectedBranch = getLSBranchId();
+
   const pathname = usePathname();
   const canChangeBranch = branches.length > 1;
 
   function handleBranchChange(value: string) {
-    setSelectedBranch(value as UUID);
+    saveLSBranchId(value as UUID);
   }
 
   return (

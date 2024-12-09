@@ -75,7 +75,7 @@ export default function LogInForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="m@example.com" {...field} />
+                <Input placeholder="Ingrese el email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -89,7 +89,7 @@ export default function LogInForm() {
               <FormLabel>Contraseña</FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="Enter your password"
+                  placeholder="Ingrese su contraseña"
                   {...field}></PasswordInput>
               </FormControl>
               <FormMessage />

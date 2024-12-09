@@ -1,28 +1,21 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ROLES_AND_SUBROLES_DICTIONARIES } from "@/lib/dictionaries";
-import { Branch, User } from "@/lib/types/models";
-import { UUID } from "crypto";
-import DialogAddUser from "./dialog";
-import { Edit2, MoreVertical, Trash2 } from "lucide-react";
-import { useSelectedBranchStore } from "@/lib/state";
-import { ColumnDef } from "@tanstack/react-table";
-import { UsersTable } from "./table";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { ROLES_AND_SUBROLES_DICTIONARIES } from "@/lib/dictionaries";
+import { getLSBranchId } from "@/lib/localStorage";
+import { Branch, User } from "@/lib/types/models";
+import { ColumnDef } from "@tanstack/react-table";
+import { UUID } from "crypto";
+import { Edit2, MoreVertical, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { AlertDeleteUser } from "./alert";
+import DialogAddUser from "./dialog";
+import { UsersTable } from "./table";
 
 export default function StaffTab({
   branches,
@@ -34,9 +27,7 @@ export default function StaffTab({
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [userSelected, setUserSelected] = useState<User | null>(null);
-  const selectedBranch = useSelectedBranchStore(
-    (state) => state.selectedBranch
-  );
+  const selectedBranch = getLSBranchId();
   const branch = branches.find((b) => b.id === selectedBranch) as Branch;
   const users = branch.Users.filter((user) => user.id !== UserId);
   const isOwner =

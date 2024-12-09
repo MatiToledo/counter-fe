@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { TimePickerDemo } from "@/components/ui/time-picker";
 import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
-import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { saveLSBranchId, saveLSSubRole, saveLSToken } from "@/lib/localStorage";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -45,7 +45,7 @@ export default function LogUpBranchForm({
   const [opening, setOpening] = useState<Date | undefined>(undefined);
   const [closing, setClosing] = useState<Date | undefined>(undefined);
   const { toast } = useToast();
-  const { mutateUser } = useUser();
+  const { mutateUser, resetUser, user } = useUser();
   const { push } = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -76,8 +76,9 @@ export default function LogUpBranchForm({
       });
       saveLSToken(fetch.token);
       saveLSSubRole(fetch.subRole);
+      await resetUser();
       await mutateUser();
-      push("/dashboard");
+      push("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -98,7 +99,7 @@ export default function LogUpBranchForm({
             <FormItem>
               <FormLabel>Nombre de la sucursal</FormLabel>
               <FormControl>
-                <Input placeholder="Juan Perez" {...field} />
+                <Input placeholder="Ingrese el nombre completo" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
