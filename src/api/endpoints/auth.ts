@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserRoleEnum, UserSubRoleEnum } from "@/lib/types/enums";
 import { fetchApiPatch, fetchApiPost } from "../config";
+import { UUID } from "crypto";
 
 export async function fetchLogIn(
   body: object
-): Promise<{ token: string; role: UserRoleEnum; subRole: UserSubRoleEnum }> {
+): Promise<{
+  token: string;
+  role: UserRoleEnum;
+  subRole: UserSubRoleEnum;
+  BranchId: UUID;
+}> {
   const fetch = await fetchApiPost("/auth/logIn", body);
   return fetch.result;
 }

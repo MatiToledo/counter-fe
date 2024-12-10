@@ -5,7 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button, LoadingButton } from "@/components/ui/button";
+import { fetchLogIn } from "@/api/endpoints/auth";
+import { LoadingButton } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,15 +16,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import PasswordInput from "../ui/password";
-import { useRouter } from "next/navigation";
-import { fetchLogIn } from "@/api/endpoints/auth";
-import { UserRoleEnum } from "@/lib/types/enums";
-import { Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
-import { getLSSubRole, saveLSSubRole, saveLSToken } from "@/lib/localStorage";
 import { useUser } from "@/hooks/context/user";
+import { useToast } from "@/hooks/use-toast";
+import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { UserRoleEnum } from "@/lib/types/enums";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import PasswordInput from "../ui/password";
+import { useStore } from "@/lib/state";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -35,10 +35,11 @@ const FormSchema = z.object({
 });
 
 export default function LogInForm() {
+  const { setSelectedBranchId } = useStore();
   const { push } = useRouter();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const { mutateUser } = useUser();
+  const { mutateUser, resetUser } = useUser();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -53,8 +54,10 @@ export default function LogInForm() {
       const fetch = await fetchLogIn({ ...data, role: UserRoleEnum.USER });
       saveLSToken(fetch.token);
       saveLSSubRole(fetch.subRole);
+      setSelectedBranchId(fetch.BranchId);
+      await resetUser();
       await mutateUser();
-      push(`/`);
+      push("/");
     } catch (error: any) {
       toast({
         variant: "destructive",

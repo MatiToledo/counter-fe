@@ -41,7 +41,7 @@ export default function EntriesPerHourCard({ data, maxCapacity }: any) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Concurrencia</CardTitle>
+        <CardTitle>Aforo</CardTitle>
         <CardDescription className="flex gap-2 items-center">
           <Users2 className="w-5 h-5"></Users2>
           <p className="text-2xl font-bold">{data.total}</p>

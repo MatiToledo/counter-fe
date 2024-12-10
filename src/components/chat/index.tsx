@@ -1,20 +1,18 @@
 "use client";
 
+import { saveLSNewMessage } from "@/lib/localStorage";
+import { useStore } from "@/lib/state";
 import { User } from "@/lib/types/models";
 import { useEffect } from "react";
 import ChatHeader from "./header";
 import MessagesChat from "./messages";
 import SendMessage from "./send";
-import {
-  getLSBranchId,
-  saveLSBranchId,
-  saveLSNewMessage,
-} from "@/lib/localStorage";
 
 export default function ChatComponent({ user }: { user: User }) {
-  const selectedBranch = getLSBranchId();
+  const { selectedBranchId, setSelectedBranchId } = useStore();
+
   useEffect(() => {
-    saveLSBranchId(user.Branches[0].id);
+    setSelectedBranchId(user.Branches[0].id);
     saveLSNewMessage(false);
   }, []);
 
@@ -22,14 +20,15 @@ export default function ChatComponent({ user }: { user: User }) {
     <div className="flex flex-col bg-background ">
       <ChatHeader
         members={
-          user.Branches.find((b) => b.id === selectedBranch)?.Users.length || 1
+          user.Branches.find((b) => b.id === selectedBranchId)?.Users.length ||
+          1
         }
         branches={user.Branches}
         role={user.role}
-        BranchId={selectedBranch}
+        BranchId={selectedBranchId}
       />
-      <MessagesChat BranchId={selectedBranch} UserId={user.id} />
-      <SendMessage BranchId={selectedBranch} UserId={user.id}></SendMessage>
+      <MessagesChat BranchId={selectedBranchId} UserId={user.id} />
+      <SendMessage BranchId={selectedBranchId} UserId={user.id}></SendMessage>
     </div>
   );
 }

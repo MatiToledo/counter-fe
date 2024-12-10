@@ -7,16 +7,12 @@ export function useStatusBar() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    console.log("CAMBIANDO EL STATUS BAR");
-
     if (theme === "dark") {
-      StatusBar.setBackgroundColor({ color: "#100c0c" });
+      StatusBar.setBackgroundColor({ color: "#0a0a0a" });
       StatusBar.setStyle({ style: Style.Dark });
-      console.log("CAMBIANDO A DARK");
     } else {
       StatusBar.setBackgroundColor({ color: "#ffffff" });
       StatusBar.setStyle({ style: Style.Light });
-      console.log("CAMBIANDO A LIGHT");
     }
   }, [theme]);
 }

@@ -41,7 +41,7 @@ export default function EarningsPerHourCard({ data }: any) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ganancias</CardTitle>
+        <CardTitle>Venta estimada</CardTitle>
         <CardDescription>
           <p className="text-2xl font-bold">{data.total}</p>
         </CardDescription>

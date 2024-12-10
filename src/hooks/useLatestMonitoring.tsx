@@ -12,7 +12,7 @@ export default function useLatestMonitoring(BranchId: UUID) {
         const res = await fetchGetLatestMonitoring(BranchId);
         setLatestMonitoring(res);
       } catch (error) {
-        console.log("error: ", error);
+        console.error("Error fetching latest monitoring:", error);
       }
     }
     fetcher();

@@ -76,7 +76,6 @@ export default function BranchForm({
     opening?.getTime() !== initialOpening?.getTime() ||
     closing?.getTime() !== initialClosing?.getTime();
   const haveSomeChange = form.formState.isDirty || hasTimeChanged;
-  console.log("haveSomeChange: ", haveSomeChange);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {

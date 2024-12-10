@@ -74,7 +74,10 @@ export default function MenuSettings({ user }: { user: User }) {
         ))}
       </TabsList>
       {tabs.map((tab) => (
-        <TabsContent key={tab.text} value={tab.id} className="w-full mt-6">
+        <TabsContent
+          key={tab.text}
+          value={tab.id}
+          className="w-full mt-6 max-h-[calc(100vh-300px)] overflow-y-auto">
           {tab.element}
         </TabsContent>
       ))}

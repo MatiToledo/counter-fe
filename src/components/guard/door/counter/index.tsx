@@ -54,9 +54,6 @@ export default function CounterComponent({
           />
         )}
       </div>
-      <div className="max-w-xs">
-        <LatestAlerts BranchId={BranchId} userFullName={"asd"} />
-      </div>
 
       <div className="w-full max-w-xs flex flex-col">
         <Buttons

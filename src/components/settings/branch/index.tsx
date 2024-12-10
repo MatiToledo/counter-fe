@@ -1,7 +1,3 @@
-import { Branch } from "@/lib/types/models";
-import { Fragment, useState } from "react";
-import BranchForm from "../../forms/settings/branch";
-import AddBranchDialog from "./add";
 import {
   Select,
   SelectContent,
@@ -11,14 +7,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Branch } from "@/lib/types/models";
+import { UUID } from "crypto";
+import { Fragment } from "react";
+import BranchForm from "../../forms/settings/branch";
+import AddBranchDialog from "./add";
+import { useStore } from "@/lib/state";
 export default function BranchTab({ branches }: { branches: Branch[] }) {
-  const [selectedBranch, setSelectedBranch] = useState<string>(branches[0]?.id);
+  const { selectedBranchId, setSelectedBranchId } = useStore();
   return (
     <Fragment>
       {branches.length > 1 && (
         <Select
-          onValueChange={(value) => setSelectedBranch(value)}
-          defaultValue={selectedBranch}>
+          onValueChange={(value) => setSelectedBranchId(value as UUID)}
+          value={selectedBranchId}>
           <SelectTrigger className="w-full mb-6">
             <SelectValue placeholder="Seleccione una sucursal" />
           </SelectTrigger>
@@ -36,7 +38,7 @@ export default function BranchTab({ branches }: { branches: Branch[] }) {
       )}
       <BranchForm
         branch={
-          branches.find((b) => b.id === selectedBranch) as Branch
+          branches.find((b) => b.id === selectedBranchId) as Branch
         }></BranchForm>
       <AddBranchDialog />
     </Fragment>

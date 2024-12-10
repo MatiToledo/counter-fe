@@ -18,15 +18,11 @@ import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/password";
 import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
+import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { useStore } from "@/lib/state";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  getLSBranchId,
-  saveLSBranchId,
-  saveLSSubRole,
-  saveLSToken,
-} from "@/lib/localStorage";
 const FormSchema = z.object({
   email: z.string().email({
     message: "El correo electrónico no es válido",
@@ -37,9 +33,9 @@ const FormSchema = z.object({
 });
 
 export default function LogInForm() {
-  const setSelectedBranch = getLSBranchId();
+  const { setSelectedBranchId } = useStore();
   const { push } = useRouter();
-  const { mutateUser, user } = useUser();
+  const { mutateUser, resetUser } = useUser();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -56,6 +52,8 @@ export default function LogInForm() {
       const fetch = await fetchLogIn({ ...data, role: UserRoleEnum.PARTNER });
       saveLSToken(fetch.token);
       saveLSSubRole(fetch.subRole);
+      setSelectedBranchId(fetch.BranchId);
+      await resetUser();
       await mutateUser();
       push("/");
     } catch (error: any) {

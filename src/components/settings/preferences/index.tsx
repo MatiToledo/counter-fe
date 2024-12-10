@@ -1,19 +1,23 @@
-import { Sun, Moon, LogOut, Trash2 } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Label } from "../ui/label";
-import { Switch } from "../ui/switch";
-import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
-import { removeLSSubRole, removeLSToken } from "@/lib/localStorage";
 import { useUser } from "@/hooks/context/user";
-import { fetchDeleteUser } from "@/api/endpoints/user";
-import { useToast } from "@/hooks/use-toast";
+import {
+  removeLSNewMessage,
+  removeLSSubRole,
+  removeLSToken,
+} from "@/lib/localStorage";
+import { LogOut, Moon, Sun, Trash2 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "../../ui/button";
+import { Label } from "../../ui/label";
+import { Separator } from "../../ui/separator";
+import { Switch } from "../../ui/switch";
+import { AlertDeleteAccount } from "./alert";
 
 export default function PreferencesTab() {
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
   const { theme, setTheme } = useTheme();
   const { user, resetUser } = useUser();
-  const { toast } = useToast();
   const { push } = useRouter();
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -21,21 +25,13 @@ export default function PreferencesTab() {
   const handleLogout = () => {
     removeLSToken();
     removeLSSubRole();
+    removeLSNewMessage();
     resetUser();
     push("/logIn");
   };
 
   async function handleDeleteAccount() {
-    try {
-      await fetchDeleteUser(user.id);
-      handleLogout();
-    } catch (error) {
-      console.log("error: ", error);
-      toast({
-        variant: "destructive",
-        title: "Error al eliminar la cuenta",
-      });
-    }
+    setIsOpenDelete(true);
   }
   return (
     <div className="space-y-4">
@@ -90,6 +86,10 @@ export default function PreferencesTab() {
           <Trash2 className="h-5 w-5 text-black dark:text-white" />
         </Button>
       </div>
+      <AlertDeleteAccount
+        handleLogout={handleLogout}
+        isOpen={isOpenDelete}
+        setIsOpen={setIsOpenDelete}></AlertDeleteAccount>
     </div>
   );
 }

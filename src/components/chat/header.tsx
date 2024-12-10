@@ -1,4 +1,4 @@
-import { saveLSBranchId } from "@/lib/localStorage";
+import { useStore } from "@/lib/state";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { Branch } from "@/lib/types/models";
 import { UUID } from "crypto";
@@ -23,9 +23,11 @@ export default function ChatHeader({
   branches: Branch[];
   BranchId: UUID;
 }) {
+  const { setSelectedBranchId } = useStore();
+
   const canChangeBranch = role === UserRoleEnum.PARTNER && branches.length > 1;
   function handleBranchChange(value: string) {
-    saveLSBranchId(value as UUID);
+    setSelectedBranchId(value as UUID);
   }
   return (
     <header className="flex items-center justify-between p-4 border-b">

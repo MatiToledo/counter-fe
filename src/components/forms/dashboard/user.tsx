@@ -42,19 +42,26 @@ export default function UserForm({
   const { mutateUser } = useUser();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const FormSchema = z.object({
-    fullName: z.string(),
-    email: z.string().email({
-      message: "El correo electrónico no es válido",
-    }),
-    role: z.enum(["partner", "user"]),
-    subRole: z.enum(["guardBar", "guardDoor"]).nullable(),
-    password: isEdit
-      ? z.string().optional()
-      : z.string().min(8, {
-          message: "La contraseña debe tener al menos 8 caracteres",
-        }),
-  });
+  const FormSchema = z
+    .object({
+      fullName: z.string(),
+      email: z.string().email({
+        message: "El correo electrónico no es válido",
+      }),
+      role: z.enum(["partner", "user"]),
+      subRole: z.enum(["guardBar", "guardDoor"]).nullable().optional(), // Permite null pero será validado después
+      password: isEdit
+        ? z.string().optional()
+        : z.string().min(8, {
+            message: "La contraseña debe tener al menos 8 caracteres",
+          }),
+    })
+    .refine((data) => {
+      if (data.role === "partner") return data.subRole === undefined;
+      if (data.role === "user") return data.subRole !== undefined;
+      return true;
+    }, "SubRol es obligatorio cuando el rol es Personal y no debe existir para Socio.");
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -67,7 +74,6 @@ export default function UserForm({
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("data: ", data);
     try {
       setLoading(true);
       const { email, password, fullName, role, subRole } = data;

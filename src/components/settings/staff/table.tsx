@@ -72,7 +72,7 @@ export function UsersTable<TData, TValue>({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto text-primary">
               Columnas
             </Button>
           </DropdownMenuTrigger>
@@ -97,7 +97,7 @@ export function UsersTable<TData, TValue>({
         </DropdownMenu>
         {isOwner && (
           <Button variant="outline" onClick={() => setIsOpen(true)}>
-            <Plus></Plus>
+            <Plus className="text-primary"></Plus>
           </Button>
         )}
       </div>
@@ -141,8 +141,8 @@ export function UsersTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center">
-                  No results.
+                  className="h-24 text-center text-primary">
+                  Sin personal
                 </TableCell>
               </TableRow>
             )}

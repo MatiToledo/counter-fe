@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ROLES_AND_SUBROLES_DICTIONARIES } from "@/lib/dictionaries";
-import { getLSBranchId } from "@/lib/localStorage";
+import { useStore } from "@/lib/state";
 import { Branch, User } from "@/lib/types/models";
 import { ColumnDef } from "@tanstack/react-table";
 import { UUID } from "crypto";
@@ -27,8 +27,9 @@ export default function StaffTab({
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [userSelected, setUserSelected] = useState<User | null>(null);
-  const selectedBranch = getLSBranchId();
-  const branch = branches.find((b) => b.id === selectedBranch) as Branch;
+  const { selectedBranchId } = useStore();
+
+  const branch = branches.find((b) => b.id === selectedBranchId) as Branch;
   const users = branch.Users.filter((user) => user.id !== UserId);
   const isOwner =
     branch.Users.find(
@@ -96,7 +97,7 @@ export default function StaffTab({
     <div className="pt-2 flex flex-col gap-5">
       <div className="flex flex-col gap-2">
         <p className="font-semibold leading-none tracking-tight text-primary">
-          Miembros
+          Miembros ({branch.name})
         </p>
         <p className="text-sm text-gray-400">
           Invita a los miembros de tu sucursal a colaborar.

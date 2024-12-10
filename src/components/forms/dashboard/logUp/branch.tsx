@@ -16,7 +16,8 @@ import { Input } from "@/components/ui/input";
 import { TimePickerDemo } from "@/components/ui/time-picker";
 import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
-import { saveLSBranchId, saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
+import { useStore } from "@/lib/state";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -41,6 +42,7 @@ export default function LogUpBranchForm({
 }: {
   accountData: AccountDataType | undefined;
 }) {
+  const { setSelectedBranchId } = useStore();
   const [loading, setLoading] = useState(false);
   const [opening, setOpening] = useState<Date | undefined>(undefined);
   const [closing, setClosing] = useState<Date | undefined>(undefined);
@@ -76,6 +78,7 @@ export default function LogUpBranchForm({
       });
       saveLSToken(fetch.token);
       saveLSSubRole(fetch.subRole);
+      setSelectedBranchId(fetch.BranchId);
       await resetUser();
       await mutateUser();
       push("/");

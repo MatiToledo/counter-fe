@@ -6,7 +6,7 @@ import MenuSettings from "./menu";
 
 export default function SettingsComponent({ user }: { user: User }) {
   return (
-    <div className="container max-w-2xl ">
+    <div className="container max-w-2xl max-h-[calc(100vh-50px)] overflow-hidden">
       <div className="space-y-1 mb-4">
         <h1 className="text-2xl font-bold tracking-tight text-black dark:text-white">
           Configuración

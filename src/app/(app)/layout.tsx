@@ -2,17 +2,16 @@
 import TabNavigation from "@/components/tabNavigation";
 import { useUser } from "@/hooks/context/user";
 import useSocket from "@/hooks/useSocket";
-import { getLSBranchId, getLSToken, saveLSBranchId } from "@/lib/localStorage";
+import { useStatusBar } from "@/hooks/useStatusBar";
+import { getLSToken } from "@/lib/localStorage";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect } from "react";
-import { useStatusBar } from "@/hooks/useStatusBar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { push } = useRouter();
   const { user } = useUser();
   const isAuthenticated = !!getLSToken();
-  const selectedBranch = getLSBranchId();
-  const { socket } = useSocket(selectedBranch, user?.id);
+  const { isConnected } = useSocket();
   useStatusBar();
   useEffect(() => {
     if (!isAuthenticated) {
@@ -22,13 +21,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <Fragment>
-      {user && socket && (
+    <>
+      {user && isConnected && (
         <>
           {children}
           <TabNavigation user={user}></TabNavigation>
         </>
       )}
-    </Fragment>
+    </>
   );
 }

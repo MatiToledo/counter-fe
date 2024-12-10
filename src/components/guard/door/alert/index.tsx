@@ -6,6 +6,7 @@ import { AlertDialogComponent } from "./dialog";
 import { fetchCreateAlert } from "@/api/endpoints/alert";
 import { useToast } from "@/hooks/use-toast";
 import { UUID } from "crypto";
+import LatestAlerts from "@/components/dashboard/home/alerts";
 
 export function GuardAlert({ BranchId }: { BranchId: UUID }) {
   const { toast } = useToast();
@@ -22,7 +23,10 @@ export function GuardAlert({ BranchId }: { BranchId: UUID }) {
   }
 
   return (
-    <div className="w-full max-w-xs flex justify-between gap-4">
+    <div className="w-full max-w-xs flex justify-between gap-4 flex-col">
+      <div className="max-w-xs">
+        <LatestAlerts BranchId={BranchId} userFullName={"asd"} />
+      </div>
       <Button
         variant="destructive"
         className="flex-1"
