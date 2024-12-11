@@ -29,7 +29,7 @@ export default function PreferencesTab() {
     removeLSToken();
     removeLSSubRole();
     removeLSNewMessage();
-    setSelectedBranchId(null);
+    setSelectedBranchId(null as unknown as UUID);
     resetUser();
     push("/logIn");
   };

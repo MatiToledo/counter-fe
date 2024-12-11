@@ -24,7 +24,9 @@ export default function DialogEntry({
           <DialogTitle>Tipo de Entrada</DialogTitle>
         </DialogHeader>
         <div className="grid gap-2">
-          <Button onClick={() => onEntry("paid")}>Entrada Paga</Button>
+          <Button onClick={() => onEntry("paid")}>
+            Entrada Paga (predeterminada)
+          </Button>
           <Button onClick={() => onEntry("free")}>Free Pass</Button>
           <Button onClick={() => onEntry("qr")}>QR</Button>
           <Button onClick={() => onEntry("vip")}>VIP/Embajadora</Button>
