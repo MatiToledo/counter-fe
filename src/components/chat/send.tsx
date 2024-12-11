@@ -1,4 +1,4 @@
-import { socket } from "@/api/socket";
+import { useSocket } from "@/hooks/context/socket";
 import MessageForm from "../forms/message";
 import { UUID } from "crypto";
 import { Message } from "postcss";
@@ -10,6 +10,8 @@ export default function SendMessage({
   UserId: UUID;
   BranchId: UUID;
 }) {
+  const { socket } = useSocket();
+
   function sendMessage(text: string) {
     const messageToSend: Partial<Message> = {
       UserId,
@@ -17,7 +19,7 @@ export default function SendMessage({
       text,
     };
 
-    socket.emit("message", messageToSend);
+    socket?.emit("message", messageToSend);
   }
   return (
     <div className="p-4 border-t">

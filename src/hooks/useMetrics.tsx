@@ -4,7 +4,7 @@ import { fetchApiGet } from "@/api/config";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function useMetrics(branchId: string) {
+export default function useMetrics(BranchId: string) {
   const [entries, setEntries] = useState<any>();
   const [earnings, setEarnings] = useState<any>();
   const [typeEntries, setTypeEntries] = useState<any>();
@@ -31,7 +31,7 @@ export default function useMetrics(branchId: string) {
     const fetchMetrics = async () => {
       try {
         const res: any = await fetchApiGet(
-          `/metrics/branch/${branchId}?date=${date}&entriesVs=${entriesVs}&earningVs=${earningVs}&typeEntriesVs=${typeEntriesVs}&peopleInBarsVs=${peopleInBarsVs}&peopleInDanceVs=${peopleInDanceVs}`
+          `/metrics/branch/${BranchId}?date=${date}&entriesVs=${entriesVs}&earningVs=${earningVs}&typeEntriesVs=${typeEntriesVs}&peopleInBarsVs=${peopleInBarsVs}&peopleInDanceVs=${peopleInDanceVs}`
         );
 
         if (res) {
@@ -48,6 +48,7 @@ export default function useMetrics(branchId: string) {
 
     fetchMetrics();
   }, [
+    BranchId,
     date,
     entriesVs,
     earningVs,

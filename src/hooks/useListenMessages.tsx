@@ -4,16 +4,17 @@ import { Message } from "@/lib/types/models";
 import { UUID } from "crypto";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { socket } from "../api/socket";
 import { useToast } from "./use-toast";
+import { useSocket } from "./context/socket";
 
 export default function useListenMessages(UserId: UUID) {
+  const { socket } = useSocket();
   const { push } = useRouter();
   const { toast } = useToast();
   const pathname = usePathname();
   useEffect(() => {
     if (!socket) return;
-    socket.on("message", (msg: Message) => {
+    socket?.on("message", (msg: Message) => {
       const isYou = msg.UserId === UserId;
       if (!isYou && pathname !== "/chat") {
         saveLSNewMessage(true);

@@ -4,16 +4,17 @@ import {
   fetchGetConcurrenceByBranch,
   fetchGetConcurrenceByBranchAndUser,
 } from "@/api/endpoints/concurrence";
-import { socket } from "@/api/socket";
 import { UUID } from "crypto";
 import { useEffect, useState } from "react";
 import { useToast } from "./use-toast";
+import { useSocket } from "./context/socket";
 
 export default function useCounter(
   BranchId: UUID,
   UserId: UUID,
   type: "user" | "partner"
 ) {
+  const { socket } = useSocket();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [totalBranch, setTotalBranch] = useState(0);
@@ -44,9 +45,10 @@ export default function useCounter(
       }
     }
     fetcher();
-  }, []);
+  }, [BranchId]);
 
   socket?.on("concurrence", (result: any) => {
+    console.log("result: ", result);
     if (type !== "user") return;
     const isYou = result.UserId === UserId;
     if (isYou) {

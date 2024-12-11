@@ -1,9 +1,10 @@
 import { fetchApiGet } from "@/api/config";
-import { socket } from "@/api/socket";
 import { UUID } from "crypto";
 import useSWR from "swr";
+import { useSocket } from "./context/socket";
 
 export default function useAlerts(BranchId: UUID) {
+  const { socket } = useSocket();
   const { data, mutate } = useSWR(`/alert/branch/${BranchId}`, (url) =>
     fetchApiGet(url)
   );

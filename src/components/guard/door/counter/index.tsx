@@ -2,13 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { socket } from "@/api/socket";
+import { useSocket } from "@/hooks/context/socket";
 import useCounter from "@/hooks/useCounter";
 import { UUID } from "crypto";
 import { useState } from "react";
 import { Buttons } from "./buttons";
 import { CounterDisplay } from "./display";
-import LatestAlerts from "@/components/dashboard/home/alerts";
 type CounterComponentProps = {
   BranchId: UUID;
   UserId: UUID;
@@ -20,6 +19,7 @@ export default function CounterComponent({
   maxCapacity,
   UserId,
 }: CounterComponentProps) {
+  const { socket } = useSocket();
   const [showEntryTypes, setShowEntryTypes] = useState(false);
   const { isLoading, total, entries, exits, totalBranch } = useCounter(
     BranchId,
@@ -28,7 +28,7 @@ export default function CounterComponent({
   );
 
   const handleExit = async () => {
-    socket.emit("concurrence", { BranchId, type: "exit" });
+    socket?.emit("concurrence", { BranchId, type: "exit" });
   };
 
   const handleEntry = async (type?: string) => {
@@ -37,7 +37,7 @@ export default function CounterComponent({
       type: "entry",
       ...(type && { entranceType: type }),
     };
-    socket.emit("concurrence", body);
+    socket?.emit("concurrence", body);
     setShowEntryTypes(false);
   };
 

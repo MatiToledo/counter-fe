@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLSToken } from "@/lib/localStorage";
+import { useStore } from "@/lib/state";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -25,10 +26,10 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }: any) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-
+  const { selectedBranchId } = useStore();
   useEffect(() => {
     const token = getLSToken() as string;
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io(SOCKET_URL, {
       reconnection: true,
       extraHeaders: {
         token: `${token}`,
@@ -46,9 +47,15 @@ export const SocketProvider = ({ children }: any) => {
     setSocket(newSocket);
 
     return () => {
-      newSocket.close(); // Cerrar la conexión al desmontar el componente
+      newSocket.close();
     };
   }, []);
+
+  useEffect(() => {
+    if (socket && selectedBranchId) {
+      socket.emit("joinBranch", selectedBranchId);
+    }
+  }, [socket, selectedBranchId]);
 
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>

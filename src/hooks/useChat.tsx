@@ -1,11 +1,12 @@
 import { fetchGetMessagesByBranchId } from "@/api/endpoints/message";
-import { socket } from "@/api/socket";
 import { Message } from "@/lib/types/models";
 import { UUID } from "crypto";
 import { useState } from "react";
 import useSWR from "swr";
+import { useSocket } from "./context/socket";
 
 export default function useChat(BranchId: UUID, UserId: UUID) {
+  const { socket } = useSocket();
   const [page, setPage] = useState(1);
   const [messages, setMessages] = useState<Message[]>([]);
   const [haveNewMessage, setHaveNewMessage] = useState(false);
@@ -28,7 +29,7 @@ export default function useChat(BranchId: UUID, UserId: UUID) {
     }
   );
 
-  socket.on("message", (msg: Message) => {
+  socket?.on("message", (msg: Message) => {
     const message = {
       ...msg,
       isYou: msg.UserId === UserId,
