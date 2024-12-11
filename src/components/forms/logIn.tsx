@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import PasswordInput from "../ui/password";
 import { useStore } from "@/lib/state";
+import { socket } from "@/api/socket";
 
 const FormSchema = z.object({
   email: z.string().email({

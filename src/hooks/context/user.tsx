@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { fetchGetMe } from "@/api/endpoints/user";
+import { getLSToken } from "@/lib/localStorage";
 import { User } from "@/lib/types/models";
 import { useRouter } from "next/navigation";
 import { createContext, useContext } from "react";

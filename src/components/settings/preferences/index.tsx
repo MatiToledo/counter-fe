@@ -4,6 +4,8 @@ import {
   removeLSSubRole,
   removeLSToken,
 } from "@/lib/localStorage";
+import { useStore } from "@/lib/state";
+import { UUID } from "crypto";
 import { LogOut, Moon, Sun, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -15,6 +17,7 @@ import { Switch } from "../../ui/switch";
 import { AlertDeleteAccount } from "./alert";
 
 export default function PreferencesTab() {
+  const { setSelectedBranchId } = useStore();
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const { theme, setTheme } = useTheme();
   const { user, resetUser } = useUser();
@@ -26,6 +29,7 @@ export default function PreferencesTab() {
     removeLSToken();
     removeLSSubRole();
     removeLSNewMessage();
+    setSelectedBranchId(null);
     resetUser();
     push("/logIn");
   };

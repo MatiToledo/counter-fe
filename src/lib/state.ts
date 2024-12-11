@@ -1,16 +1,21 @@
-import { UUID } from "crypto";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-// Define the store interface
+// Define la interfaz del estado del store
 interface StoreState {
-  selectedBranchId: UUID;
-  setSelectedBranchId: (id: UUID) => void;
-  // Add more states as needed
+  selectedBranchId: string | null; // Usando string o null
+  setSelectedBranchId: (id: string | null) => void;
 }
 
-// Create the Zustand store
-export const useStore = create<StoreState>((set) => ({
-  selectedBranchId: "" as UUID, // Default value
-  setSelectedBranchId: (id: UUID) => set({ selectedBranchId: id }),
-  // Define more state setters here
-}));
+// Crea el store de Zustand con persistencia
+export const useStore = create<StoreState>()(
+  persist(
+    (set) => ({
+      selectedBranchId: null, // Valor por defecto
+      setSelectedBranchId: (id: string | null) => set({ selectedBranchId: id }),
+    }),
+    {
+      name: "selectedBranchId", // Nombre del almacenamiento
+    }
+  )
+);

@@ -4,13 +4,13 @@ import { UUID } from "crypto";
 import { useEffect, useRef, useState } from "react";
 import { socket } from "../api/socket";
 
-export default function useSocket() {
+export default function useSocket(UserId: UUID) {
   const [isConnected, setIsConnected] = useState(socket?.connected || false);
-
-  const previousBranchIdRef = useRef<UUID | null>(null);
+  const previousBranchIdRef = useRef<string | null>(null);
   const { selectedBranchId } = useStore();
-
   useEffect(() => {
+    if (!socket) return;
+    setIsConnected(socket.connected);
     function onConnect() {
       setIsConnected(true);
     }
@@ -26,14 +26,15 @@ export default function useSocket() {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
     };
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
+    if (!UserId || !socket) return;
     if (previousBranchIdRef.current) {
-      socket.emit("leaveBranch", previousBranchIdRef.current);
+      socket?.emit("leaveBranch", previousBranchIdRef.current);
     }
 
-    socket.emit("joinBranch", selectedBranchId);
+    socket?.emit("joinBranch", selectedBranchId);
 
     previousBranchIdRef.current = selectedBranchId;
 
@@ -42,7 +43,7 @@ export default function useSocket() {
         socket.emit("leaveBranch", previousBranchIdRef.current);
       }
     };
-  }, [selectedBranchId]);
+  }, [selectedBranchId, UserId]);
 
   return { isConnected };
 }

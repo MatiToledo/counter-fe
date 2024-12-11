@@ -23,6 +23,7 @@ import { useStore } from "@/lib/state";
 import { UserRoleEnum } from "@/lib/types/enums";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { socket } from "@/api/socket";
 const FormSchema = z.object({
   email: z.string().email({
     message: "El correo electrónico no es válido",
