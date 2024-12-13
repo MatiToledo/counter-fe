@@ -4,10 +4,12 @@ import { useStore } from "@/lib/state";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3080"
-    : "https://flowlyinfo.com:3080";
+// const SOCKET_URL =
+//   process.env.NODE_ENV === "development"
+//     ? "http://localhost:3080"
+//     : "https://flowlyinfo.com:3080";
+
+const SOCKET_URL = "ws://10.0.2.2:3080/v1";
 
 interface SocketContextProps {
   socket: Socket | null;

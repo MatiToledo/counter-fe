@@ -3,9 +3,7 @@ import { UserRoleEnum, UserSubRoleEnum } from "@/lib/types/enums";
 import { fetchApiPatch, fetchApiPost } from "../config";
 import { UUID } from "crypto";
 
-export async function fetchLogIn(
-  body: object
-): Promise<{
+export async function fetchLogIn(body: object): Promise<{
   token: string;
   role: UserRoleEnum;
   subRole: UserSubRoleEnum;
@@ -21,4 +19,11 @@ export async function fetchLogUp(body: object): Promise<any> {
 
 export async function fetchUpdatePassword(body: object): Promise<any> {
   return await fetchApiPatch("/auth/password", body);
+}
+export async function fetchSendRecovery(body: object): Promise<any> {
+  return await fetchApiPost("/auth/recovery/send", body);
+}
+
+export async function fetchRecoveryPassword(body: object): Promise<any> {
+  return await fetchApiPost("/auth/recovery", body);
 }

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { fetchLogIn } from "@/api/endpoints/auth";
+import { fetchSendRecovery } from "@/api/endpoints/auth";
 import { LoadingButton } from "@/components/ui/button";
 import {
   Form,
@@ -15,47 +16,35 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import PasswordInput from "@/components/ui/password";
-import { useUser } from "@/hooks/context/user";
 import { useToast } from "@/hooks/use-toast";
-import { saveLSSubRole, saveLSToken } from "@/lib/localStorage";
-import { useStore } from "@/lib/state";
-import { UserRoleEnum } from "@/lib/types/enums";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+
 const FormSchema = z.object({
   email: z.string().email({
     message: "El correo electrónico no es válido",
   }),
-  password: z.string().min(8, {
-    message: "La contraseña debe tener al menos 8 caracteres",
-  }),
 });
 
-export default function LogInForm() {
-  const { setSelectedBranchId } = useStore();
-  const { push } = useRouter();
-  const { mutateUser, resetUser } = useUser();
+export default function RecoverySendForm({
+  setCodeSended,
+  setMultipleAccount,
+}: any) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       setLoading(true);
-      const fetch = await fetchLogIn({ ...data, role: UserRoleEnum.PARTNER });
-      saveLSToken(fetch.token);
-      saveLSSubRole(fetch.subRole);
-      setSelectedBranchId(fetch.BranchId);
-      await resetUser();
-      await mutateUser();
-      push("/");
+      const fetch = await fetchSendRecovery(data);
+      console.log("fetch: ", fetch);
+      setCodeSended(true);
+      setMultipleAccount(fetch.result.multipleAccount);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -82,23 +71,8 @@ export default function LogInForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Contraseña</FormLabel>
-              <FormControl>
-                <PasswordInput
-                  placeholder="Ingrese su contraseña"
-                  {...field}></PasswordInput>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <LoadingButton loading={loading} disabled={!form.formState.isDirty}>
-          Ingresar
+          Continuar
         </LoadingButton>
       </form>
     </Form>

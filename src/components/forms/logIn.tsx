@@ -24,7 +24,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import PasswordInput from "../ui/password";
 import { useStore } from "@/lib/state";
-import { socket } from "@/api/socket";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -90,7 +89,14 @@ export default function LogInForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Contraseña</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Contraseña</FormLabel>
+                <p
+                  onClick={() => push("/recoveryPassword")}
+                  className="text-sm text-blue-400 hover:text-blue-300 pointer">
+                  ¿Olvidó su contraseña?
+                </p>
+              </div>
               <FormControl>
                 <PasswordInput
                   placeholder="Ingrese su contraseña"
