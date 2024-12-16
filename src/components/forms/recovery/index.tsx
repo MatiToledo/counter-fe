@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z
   .object({
@@ -47,8 +48,9 @@ const FormSchema = z
     path: ["confirmPassword"],
   });
 
-export default function RecoveryForm({ multipleAccount }: any) {
+export default function RecoveryForm({ role, email }: any) {
   const [loading, setLoading] = useState(false);
+  const { push } = useRouter();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -62,7 +64,11 @@ export default function RecoveryForm({ multipleAccount }: any) {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       setLoading(true);
-      const fetch = await fetchRecoveryPassword(data);
+      await fetchRecoveryPassword({ ...data, role, email });
+      toast({
+        title: "La contraseña se ha actualizado exitosamente",
+      });
+      push("/logIn");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -128,32 +134,7 @@ export default function RecoveryForm({ multipleAccount }: any) {
             </FormItem>
           )}
         />
-        {multipleAccount && (
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Rol</FormLabel>
-                <FormDescription>
-                  Tienes múltiples cuentas, cual quieres recuperar
-                </FormDescription>
-                <Select onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Rol" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="user">Usuario</SelectItem>
-                    <SelectItem value="partner">Socio</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+
         <LoadingButton loading={loading} disabled={!form.formState.isDirty}>
           Recuperar Contraseña
         </LoadingButton>

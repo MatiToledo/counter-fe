@@ -5,11 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { fetchSendRecovery } from "@/api/endpoints/auth";
+import { fetchCheckRecovery, fetchSendRecovery } from "@/api/endpoints/auth";
 import { LoadingButton } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,18 +19,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const FormSchema = z.object({
   email: z.string().email({
     message: "El correo electrónico no es válido",
   }),
+  role: z.enum(["partner", "user"]).nullable().optional(),
 });
 
 export default function RecoverySendForm({
   setCodeSended,
-  setMultipleAccount,
+  setRole,
+  setEmail,
 }: any) {
   const [loading, setLoading] = useState(false);
+  const [multipleAccount, setMultipleAccount] = useState(false);
+  const [checked, setChecked] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -41,10 +53,17 @@ export default function RecoverySendForm({
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       setLoading(true);
-      const fetch = await fetchSendRecovery(data);
-      console.log("fetch: ", fetch);
+      if (!checked) {
+        const checkedRes = await fetchCheckRecovery(data);
+        setMultipleAccount(checkedRes.result.multipleAccount);
+        setChecked(true);
+        setEmail(data.email);
+        if (checkedRes.result.multipleAccount) return;
+      }
+
+      await fetchSendRecovery(data);
+      setRole(data.role);
       setCodeSended(true);
-      setMultipleAccount(fetch.result.multipleAccount);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -57,7 +76,9 @@ export default function RecoverySendForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="gap-4 min-h-[255px] flex flex-col justify-between">
         <FormField
           control={form.control}
           name="email"
@@ -71,6 +92,32 @@ export default function RecoverySendForm({
             </FormItem>
           )}
         />
+        {multipleAccount && checked && (
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Rol</FormLabel>
+                <FormDescription>
+                  Tienes múltiples cuentas, cual quieres recuperar
+                </FormDescription>
+                <Select onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Rol" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="user">Usuario</SelectItem>
+                    <SelectItem value="partner">Socio</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <LoadingButton loading={loading} disabled={!form.formState.isDirty}>
           Continuar
         </LoadingButton>

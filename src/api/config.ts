@@ -7,8 +7,8 @@ export async function fetchAPI(path: RequestInfo, config: object) {
   //   process.env.NODE_ENV === "development"
   //     ? "http://localhost:3080/v1"
   //     : "https://flowlyinfo.com:3080/v1";
-  // const BASE_API_URL = "https://flowlyinfo.com:3080/v1";
-  const BASE_API_URL = "http://10.0.2.2:3080/v1";
+  const BASE_API_URL = "https://flowlyinfo.com:3080/v1";
+  // const BASE_API_URL = "http://10.0.2.2:3080/v1";
   const url = BASE_API_URL + path;
 
   const fullConfig = {

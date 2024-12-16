@@ -8,8 +8,8 @@ import { io, Socket } from "socket.io-client";
 //   process.env.NODE_ENV === "development"
 //     ? "http://localhost:3080"
 //     : "https://flowlyinfo.com:3080";
-
-const SOCKET_URL = "ws://10.0.2.2:3080/v1";
+const SOCKET_URL = "https://flowlyinfo.com:3080";
+// const SOCKET_URL = "ws://10.0.2.2:3080";
 
 interface SocketContextProps {
   socket: Socket | null;

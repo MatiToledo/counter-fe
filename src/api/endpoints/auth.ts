@@ -20,6 +20,9 @@ export async function fetchLogUp(body: object): Promise<any> {
 export async function fetchUpdatePassword(body: object): Promise<any> {
   return await fetchApiPatch("/auth/password", body);
 }
+export async function fetchCheckRecovery(body: object): Promise<any> {
+  return await fetchApiPost("/auth/recovery/check", body);
+}
 export async function fetchSendRecovery(body: object): Promise<any> {
   return await fetchApiPost("/auth/recovery/send", body);
 }
