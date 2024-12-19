@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { AccountDataType } from "@/components/dashboard/access/logUp";
+import { AccountDataType } from "@/components/auth/access/logUp";
 import { Button } from "@/components/ui/button";
 import {
   Form,

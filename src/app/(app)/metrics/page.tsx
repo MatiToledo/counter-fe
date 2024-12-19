@@ -1,6 +1,6 @@
 "use client";
-import MetricsComponent from "@/components/dashboard/metrics";
-import FallbackComponent from "@/components/fallback";
+import MetricsComponent from "@/components/app/dashboard/metrics";
+import FallbackComponent from "@/components/common/fallback";
 import { useUser } from "@/hooks/context/user";
 import useListenMessages from "@/hooks/useListenMessages";
 import { Fragment } from "react";

@@ -1,5 +1,5 @@
 "use client";
-import { DashboardAccessComponent } from "@/components/dashboard/access";
+import { DashboardAccessComponent } from "@/components/auth/access";
 
 export default function DashboardLogIn() {
   return (

@@ -1,8 +1,8 @@
 "use client";
-import DashboardHomeComponent from "@/components/dashboard/home";
-import FallbackComponent from "@/components/fallback";
-import GuardBarComponent from "@/components/guard/bar";
-import GuardDoorComponent from "@/components/guard/door";
+import DashboardHomeComponent from "@/components/app/dashboard/home";
+import FallbackComponent from "@/components/common/fallback";
+import GuardBarComponent from "@/components/app/guard/bar";
+import GuardDoorComponent from "@/components/app/guard/door";
 import { useUser } from "@/hooks/context/user";
 import useListenMessages from "@/hooks/useListenMessages";
 import { Fragment } from "react";

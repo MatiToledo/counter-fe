@@ -2,7 +2,7 @@
 "use client";
 
 import { fetchLogIn, fetchLogUp } from "@/api/endpoints/auth";
-import { AccountDataType } from "@/components/dashboard/access/logUp";
+import { AccountDataType } from "@/components/auth/access/logUp";
 import { LoadingButton } from "@/components/ui/button";
 import {
   Form,

@@ -1,6 +1,6 @@
 "use client";
-import FallbackComponent from "@/components/fallback";
-import SettingsComponent from "@/components/settings";
+import FallbackComponent from "@/components/common/fallback";
+import SettingsComponent from "@/components/app/settings";
 import { useUser } from "@/hooks/context/user";
 import useListenMessages from "@/hooks/useListenMessages";
 import { Fragment } from "react";
