@@ -7,10 +7,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useState } from "react";
-import RecoverySendForm from "./forms/recovery/send";
-import RecoveryForm from "./forms/recovery";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import RecoverySendForm from "../forms/recovery/send";
+import RecoveryForm from "../forms/recovery";
 
 export function RecoveryPasswordComponent() {
   const { push } = useRouter();

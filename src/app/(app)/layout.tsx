@@ -1,5 +1,5 @@
 "use client";
-import AppContent from "@/components/appContent";
+import AppContent from "@/components/app/appContent";
 import { SocketProvider } from "@/hooks/context/socket";
 import { useStatusBar } from "@/hooks/useStatusBar";
 import { getLSToken } from "@/lib/localStorage";

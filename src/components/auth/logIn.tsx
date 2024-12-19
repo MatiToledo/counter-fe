@@ -6,8 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import LogInForm from "./forms/logIn";
 import Link from "next/link";
+import LogInForm from "../forms/logIn";
 
 export function LoginComponent() {
   return (

@@ -1,4 +1,4 @@
-import { RecoveryPasswordComponent } from "@/components/recoveryPassword";
+import { RecoveryPasswordComponent } from "@/components/auth/recoveryPassword";
 
 export default function RecoveryPassword() {
   return (
