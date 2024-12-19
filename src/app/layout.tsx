@@ -1,6 +1,6 @@
 "use client";
 import "../styles/globals.css";
-import { ThemeProvider } from "@/components/themeProvider";
+import { ThemeProvider } from "@/components/common/themeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { UserProvider } from "@/hooks/context/user";
 import localFont from "next/font/local";
